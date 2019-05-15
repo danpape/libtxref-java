@@ -5,7 +5,7 @@ and "Bech32 Encoded Tx Position References" (txref). Txrefs are
 described in [BIP 0136](https://github.com/veleslavs/bips/blob/txrev_v2/bip-0136.mediawiki).
 
 
-## Getting and using libtxref-java
+## Getting libtxref-java
 
 To use libtxref-java in your project, you can get
 the package from Maven Central:
@@ -24,6 +24,34 @@ or download the jar from the Maven repository.
 
 The only external dependencies libtxref-java has are [libbech32-java](https://github.com/dcdpr/libbech32-java) and `JUint.`
 
+## Usage Example
+
+```java
+import design.contract.txref.Txref;
+
+public class EncodingExample {
+
+    public static void main(String[] args) {
+
+            int blockHeight = 466793;
+            int transactionPosition = 2205;
+
+            // create a simple txref for a testnet transaction
+            String txref = Txref.encodeTestnet( blockHeight, transactionPosition);
+
+            System.out.println(txref);
+            // prints "txtest1:xjk0-uqay-zat0-dz8"
+
+            int txoIndex = 3;
+
+            // create an extended txref for a testnet transaction
+            txref = Txref.encodeTestnet( blockHeight, transactionPosition, txoIndex);
+
+            System.out.println(txref);
+            // prints "txtest1:8jk0-uqay-zrqq-23mk-fl"
+    }
+}
+```
 
 ## Building libtxref-java
 

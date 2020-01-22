@@ -10,52 +10,52 @@ public class TxrefApiTest {
 
     @Test
     public void encode_mainnet() {
-        assertEquals("tx1:rjk0-uqay-zsrw-hqe",
+        assertEquals("tx1:rjk0-uqay-z0u3-gl8",
                 Txref.encode( 466793, 2205));
-        assertEquals("tx1:rjk0-uqay-zsrw-hqe",
+        assertEquals("tx1:rjk0-uqay-z0u3-gl8",
                 Txref.encode( 466793, 2205, 0));
-        assertEquals("tx1:rjk0-uqay-zsrw-hqe",
+        assertEquals("tx1:rjk0-uqay-z0u3-gl8",
                 Txref.encode( 466793, 2205, 0, false));
-        assertEquals("tx1:rjk0-uqay-zsrw-hqe",
+        assertEquals("tx1:rjk0-uqay-z0u3-gl8",
                 Txref.encode( 466793, 2205, 0, false, Txref.BECH32_HRP_MAIN));
     }
 
     @Test
     public void encode_testnet() {
-        assertEquals("txtest1:xjk0-uqay-zat0-dz8",
+        assertEquals("txtest1:xjk0-uqay-zz5s-jae",
                 Txref.encodeTestnet( 466793, 2205));
-        assertEquals("txtest1:xjk0-uqay-zat0-dz8",
+        assertEquals("txtest1:xjk0-uqay-zz5s-jae",
                 Txref.encodeTestnet( 466793, 2205, 0));
-        assertEquals("txtest1:xjk0-uqay-zat0-dz8",
+        assertEquals("txtest1:xjk0-uqay-zz5s-jae",
                 Txref.encodeTestnet( 466793, 2205, 0, false));
-        assertEquals("txtest1:xjk0-uqay-zat0-dz8",
+        assertEquals("txtest1:xjk0-uqay-zz5s-jae",
                 Txref.encodeTestnet( 466793, 2205, 0, false, Txref.BECH32_HRP_TEST));
     }
 
 
     @Test
     public void encode_extended_mainnet() {
-        assertEquals("tx1:yjk0-uqay-zu4x-nk6u-pc",
+        assertEquals("tx1:yjk0-uqay-zu4x-vf9r-7x",
                 Txref.encode( 466793, 2205, 0x1ABC));
-        assertEquals("tx1:yjk0-uqay-zu4x-nk6u-pc",
+        assertEquals("tx1:yjk0-uqay-zu4x-vf9r-7x",
                 Txref.encode( 466793, 2205, 0x1ABC, false));
-        assertEquals("tx1:yjk0-uqay-zu4x-nk6u-pc",
+        assertEquals("tx1:yjk0-uqay-zu4x-vf9r-7x",
                 Txref.encode( 466793, 2205, 0x1ABC, false, Txref.BECH32_HRP_MAIN));
     }
 
     @Test
     public void encode_extended_testnet() {
-        assertEquals("txtest1:8jk0-uqay-zu4x-aw4h-zl",
+        assertEquals("txtest1:8jk0-uqay-zu4x-z32g-ap",
                 Txref.encodeTestnet( 466793, 2205, 0x1ABC));
-        assertEquals("txtest1:8jk0-uqay-zu4x-aw4h-zl",
+        assertEquals("txtest1:8jk0-uqay-zu4x-z32g-ap",
                 Txref.encodeTestnet( 466793, 2205, 0x1ABC, false));
-        assertEquals("txtest1:8jk0-uqay-zu4x-aw4h-zl",
+        assertEquals("txtest1:8jk0-uqay-zu4x-z32g-ap",
                 Txref.encodeTestnet( 466793, 2205, 0x1ABC, false, Txref.BECH32_HRP_TEST));
     }
 
     @Test
     public void decode_mainnet() {
-        LocationData ld = Txref.decode("tx1:rjk0-uqay-zsrw-hqe");
+        LocationData ld = Txref.decode("tx1:rjk0-uqay-z0u3-gl8");
         assertEquals(Txref.BECH32_HRP_MAIN, ld.getHrp());
         assertEquals(Txref.MAGIC_BTC_MAIN, ld.getMagicCode());
         assertEquals(466793, ld.getBlockHeight());
@@ -65,7 +65,7 @@ public class TxrefApiTest {
 
     @Test
     public void decode_testnet() {
-        LocationData ld = Txref.decode("txtest1:xjk0-uqay-zat0-dz8");
+        LocationData ld = Txref.decode("txtest1:xjk0-uqay-zz5s-jae");
         assertEquals(Txref.BECH32_HRP_TEST, ld.getHrp());
         assertEquals(Txref.MAGIC_BTC_TEST, ld.getMagicCode());
         assertEquals(466793, ld.getBlockHeight());
@@ -75,7 +75,7 @@ public class TxrefApiTest {
 
     @Test
     public void decode_extended_mainnet() {
-        LocationData ld = Txref.decode("tx1:yjk0-uqay-zu4x-nk6u-pc");
+        LocationData ld = Txref.decode("tx1:yjk0-uqay-zu4x-vf9r-7x");
         assertEquals(Txref.BECH32_HRP_MAIN, ld.getHrp());
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, ld.getMagicCode());
         assertEquals(466793, ld.getBlockHeight());
@@ -85,7 +85,7 @@ public class TxrefApiTest {
 
     @Test
     public void decode_extended_testnet() {
-        LocationData ld = Txref.decode("txtest1:8jk0-uqay-zu4x-aw4h-zl");
+        LocationData ld = Txref.decode("txtest1:8jk0-uqay-zu4x-z32g-ap");
         assertEquals(Txref.BECH32_HRP_TEST, ld.getHrp());
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, ld.getMagicCode());
         assertEquals(466793, ld.getBlockHeight());
@@ -147,21 +147,21 @@ public class TxrefApiTest {
     @Test
     public void classifyInputString_txref() {
         // mainnet
-        assertEquals(Txref.InputParam.txref_param, Txref.classifyInputString("tx1rqqqqqqqqmhuqhp"));
-        assertEquals(Txref.InputParam.txref_param, Txref.classifyInputString("rqqqqqqqqmhuqhp"));
+        assertEquals(Txref.InputParam.txref_param, Txref.classifyInputString("tx1rqqqqqqqqygrlgl"));
+        assertEquals(Txref.InputParam.txref_param, Txref.classifyInputString("rqqqqqqqqygrlgl"));
         // testnet
-        assertEquals(Txref.InputParam.txref_param, Txref.classifyInputString("txtest1xjk0uqayzat0dz8"));
-        assertEquals(Txref.InputParam.txref_param, Txref.classifyInputString("xjk0uqayzat0dz8"));
+        assertEquals(Txref.InputParam.txref_param, Txref.classifyInputString("txtest1xjk0uqayzz5sjae"));
+        assertEquals(Txref.InputParam.txref_param, Txref.classifyInputString("xjk0uqayzz5sjae"));
     }
 
     @Test
     public void classifyInputString_txrefext() {
         // mainnet
-        assertEquals(Txref.InputParam.txrefext_param, Txref.classifyInputString("tx1yqqqqqqqqqqqksvh26"));
-        assertEquals(Txref.InputParam.txrefext_param, Txref.classifyInputString("yqqqqqqqqqqqksvh26"));
+        assertEquals(Txref.InputParam.txrefext_param, Txref.classifyInputString("tx1yqqqqqqqqqqqf0ng4y"));
+        assertEquals(Txref.InputParam.txrefext_param, Txref.classifyInputString("yqqqqqqqqqqqf0ng4y"));
         // testnet
-        assertEquals(Txref.InputParam.txrefext_param, Txref.classifyInputString("txtest18jk0uqayzu4xaw4hzl"));
-        assertEquals(Txref.InputParam.txrefext_param, Txref.classifyInputString("8jk0uqayzu4xaw4hzl"));
+        assertEquals(Txref.InputParam.txrefext_param, Txref.classifyInputString("txtest18jk0uqayzu4xz32gap"));
+        assertEquals(Txref.InputParam.txrefext_param, Txref.classifyInputString("8jk0uqayzu4xz32gap"));
     }
 
 }

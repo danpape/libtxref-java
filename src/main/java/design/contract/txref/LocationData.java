@@ -2,14 +2,14 @@ package design.contract.txref;
 
 import java.util.Objects;
 
-@SuppressWarnings("WeakerAccess")
 public class LocationData {
-        private String hrp;
-        private String txref;
-        private int blockHeight;
-        private int transactionPosition;
-        private int txoIndex;
-        private int magicCode;
+
+    private String hrp;
+    private String txref;
+    private int blockHeight;
+    private int transactionPosition;
+    private int txoIndex;
+    private int magicCode;
 
     public LocationData(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode) {
         this.hrp = hrp;

@@ -1,7 +1,7 @@
 package design.contract.txref;
 
 import design.contract.bech32.Bech32;
-import design.contract.bech32.HrpAndDp;
+import design.contract.bech32.DecodedResult;
 
 import java.util.Arrays;
 
@@ -76,7 +76,6 @@ public interface Txref {
                     length == limits.TXREF_EXT_STRING_NO_HRP_MIN_LENGTH;
         }
 
-
         // a block's height can only be in a certain range
         static void checkBlockHeightRange(int blockHeight) {
             if(blockHeight < 0 || blockHeight > limits.MAX_BLOCK_HEIGHT)
@@ -119,7 +118,7 @@ public interface Txref {
                 int hrplen,
                 int separatorOffset) {
 
-            if(hrplen > Bech32.limits.MAX_HRP_LENGTH) {
+            if(hrplen > Bech32.Limits.MAX_HRP_LENGTH) {
                 throw new RuntimeException("HRP must be less than 84 characters long");
             }
 
@@ -174,17 +173,17 @@ public interface Txref {
         }
 
         // extract the magic code from the decoded data part
-        static char extractMagicCode(HrpAndDp hd) {
+        static char extractMagicCode(DecodedResult hd) {
             return hd.getDp()[0];
         }
 
         // extract the version from the decoded data part
-        static char extractVersion(HrpAndDp hd) {
+        static char extractVersion(DecodedResult hd) {
             return (char)(hd.getDp()[1] & 0x1);
         }
 
         // extract the block height from the decoded data part
-        static int extractBlockHeight(HrpAndDp hd) {
+        static int extractBlockHeight(DecodedResult hd) {
             char version = extractVersion(hd);
 
             if(version == 0) {
@@ -202,7 +201,7 @@ public interface Txref {
         }
 
         // extract the transaction position from the decoded data part
-        static int extractTransactionPosition(HrpAndDp hd) {
+        static int extractTransactionPosition(DecodedResult hd) {
             char version = extractVersion(hd);
 
             if(version == 0) {
@@ -218,7 +217,7 @@ public interface Txref {
         }
 
         // extract the TXO index from the decoded data part
-        static int extractTxoIndex(HrpAndDp hd) {
+        static int extractTxoIndex(DecodedResult hd) {
             if(hd.getDp().length < 12) {
                 // non-extended txrefs don't store the txoIndex, so just return 0
                 return 0;
@@ -242,10 +241,10 @@ public interface Txref {
         // assumes that stripUnknownChars() has already been called
         static String addHrpIfNeeded(final String txref) {
             if(isLengthValid(txref.length()) && (txref.charAt(0) == 'r' || txref.charAt(0) == 'y')) {
-                return Txref.BECH32_HRP_MAIN + Bech32.separator + txref;
+                return Txref.BECH32_HRP_MAIN + Bech32.SEPARATOR + txref;
             }
             if(isLengthValid(txref.length()) && (txref.charAt(0) == 'x' || txref.charAt(0) == '8')) {
-                return Txref.BECH32_HRP_TEST + Bech32.separator + txref;
+                return Txref.BECH32_HRP_TEST + Bech32.SEPARATOR + txref;
             }
             return txref;
         }
@@ -335,21 +334,33 @@ public interface Txref {
         static LocationData txrefDecode(String txref) {
             String txrefClean = Bech32.stripUnknownChars(txref);
             txrefClean = impl.addHrpIfNeeded(txrefClean);
-            HrpAndDp hd = Bech32.decode(txrefClean);
+            DecodedResult hd = Bech32.decode(txrefClean);
+
+            if(hd.getHrp() == null) {
+                throw new RuntimeException("decoding failed");
+            }
 
             int dataSize = hd.getDp().length;
             if(!impl.isDataSizeValid(dataSize)) {
                 throw new RuntimeException("decoded dp size is incorrect");
             }
 
-            return new LocationData(
+            LocationData result = new LocationData(
                     hd.getHrp(),
                     impl.prettyPrint(txrefClean, hd.getHrp().length()),
                     impl.extractBlockHeight(hd),
                     impl.extractTransactionPosition(hd),
                     impl.extractTxoIndex(hd),
-                    impl.extractMagicCode(hd)
-            );
+                    impl.extractMagicCode(hd));
+
+            if(hd.getEncoding() == DecodedResult.Encoding.BECH32M) {
+                result.setEncoding(LocationData.Encoding.BECH32M);
+            }
+            else if(hd.getEncoding() == DecodedResult.Encoding.BECH32) {
+                result.setEncoding(LocationData.Encoding.BECH32);
+            }
+
+            return result;
         }
 
         static InputParam classifyInputStringBase(final String str) {
@@ -530,7 +541,7 @@ public interface Txref {
         if (baseResult == InputParam.txref_param && missingResult == InputParam.txrefext_param) {
             if (str.charAt(0) == Txref.BECH32_HRP_MAIN.charAt(0) &&     // 't'
                     str.charAt(1) == Txref.BECH32_HRP_MAIN.charAt(1) && // 'x'
-                    str.charAt(2) == Bech32.separator)                  // '1'
+                    str.charAt(2) == Bech32.SEPARATOR)                  // '1'
                 return InputParam.txref_param;
             else
                 return InputParam.txrefext_param;

@@ -10,6 +10,7 @@ public class LocationData {
     private int transactionPosition;
     private int txoIndex;
     private int magicCode;
+    private Encoding encoding;
 
     public LocationData(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode) {
         this.hrp = hrp;
@@ -18,6 +19,17 @@ public class LocationData {
         this.transactionPosition = transactionPosition;
         this.txoIndex = txoIndex;
         this.magicCode = magicCode;
+        this.encoding = Encoding.INVALID;
+    }
+
+    public LocationData(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode, Encoding encoding) {
+        this.hrp = hrp;
+        this.txref = txref;
+        this.blockHeight = blockHeight;
+        this.transactionPosition = transactionPosition;
+        this.txoIndex = txoIndex;
+        this.magicCode = magicCode;
+        this.encoding = encoding;
     }
 
     public String getHrp() {
@@ -68,6 +80,14 @@ public class LocationData {
         this.magicCode = magicCode;
     }
 
+    public Encoding getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(Encoding encoding) {
+        this.encoding = encoding;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -80,11 +100,18 @@ public class LocationData {
                 txoIndex == that.txoIndex &&
                 magicCode == that.magicCode &&
                 Objects.equals(hrp, that.hrp) &&
-                Objects.equals(txref, that.txref);
+                Objects.equals(txref, that.txref) &&
+                encoding == that.encoding;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hrp, txref, blockHeight, transactionPosition, txoIndex, magicCode);
+        return Objects.hash(hrp, txref, blockHeight, transactionPosition, txoIndex, magicCode, encoding);
+    }
+
+    public enum Encoding {
+        INVALID, // no or invalid encoding was detected
+        BECH32,  // encoding used original checksum constant (1)
+        BECH32M; // encoding used default checksum constant (M = 0x2bc830a3)
     }
 }

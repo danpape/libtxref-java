@@ -10,10 +10,10 @@ public class TxrefEncodingExample {
 
         // create a simple txref for a testnet transaction, with only a
         // blockHeight and transactionPosition
-        String txref = Txref.encodeTestnet( blockHeight, transactionPosition);
+        String txref = Txref.encodeTestnet(blockHeight, transactionPosition);
 
         System.out.println(txref);
-        // prints "txtest1:xjk0-uqay-zz5s-jae"
+        // prints "txtest1:xjk0-uqay-zghl-p89"
     }
 
     private static void createExtendedTxref() {
@@ -23,10 +23,10 @@ public class TxrefEncodingExample {
 
         // create an extended txref for a testnet transaction, with a
         // blockHeight and transactionPosition and a specific txoIndex of 3
-        String txref = Txref.encodeTestnet( blockHeight, transactionPosition, txoIndex);
+        String txref = Txref.encodeTestnet(blockHeight, transactionPosition, txoIndex);
 
         System.out.println(txref);
-        // prints "txtest1:8jk0-uqay-zrqq-4wyf-kp"
+        // prints "txtest1:8jk0-uqay-zrqq-ldt6-va"
     }
 
     public static void main(String[] args) {

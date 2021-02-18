@@ -22,7 +22,7 @@ public class EncodingExample {
             String txref = Txref.encodeTestnet( blockHeight, transactionPosition);
 
             System.out.println(txref);
-            // prints "txtest1:xjk0-uqay-zz5s-jae"
+            // prints "txtest1:xjk0-uqay-zghl-p89"
 
             int txoIndex = 3;
 

@@ -1,7 +1,6 @@
 package design.contract.txref;
 
 import design.contract.bech32.Bech32;
-import design.contract.bech32.DecodedResult;
 
 import java.util.Arrays;
 
@@ -173,21 +172,20 @@ public interface Txref {
         }
 
         // extract the magic code from the decoded data part
-        static char extractMagicCode(DecodedResult hd) {
-            return hd.getDp()[0];
+        static char extractMagicCode(char[] dp) {
+            return dp[0];
         }
 
         // extract the version from the decoded data part
-        static char extractVersion(DecodedResult hd) {
-            return (char)(hd.getDp()[1] & 0x1);
+        static char extractVersion(char[] dp) {
+            return (char)(dp[1] & 0x1);
         }
 
         // extract the block height from the decoded data part
-        static int extractBlockHeight(DecodedResult hd) {
-            char version = extractVersion(hd);
+        static int extractBlockHeight(char[] dp) {
+            char version = extractVersion(dp);
 
             if(version == 0) {
-                char[] dp = hd.getDp();
                 int blockHeight = (dp[1] >> 1);
                 blockHeight |= (dp[2] << 4);
                 blockHeight |= (dp[3] << 9);
@@ -201,11 +199,10 @@ public interface Txref {
         }
 
         // extract the transaction position from the decoded data part
-        static int extractTransactionPosition(DecodedResult hd) {
-            char version = extractVersion(hd);
+        static int extractTransactionPosition(char[] dp) {
+            char version = extractVersion(dp);
 
             if(version == 0) {
-                char[] dp = hd.getDp();
                 int transactionPosition = dp[6];
                 transactionPosition |= (dp[7] << 5);
                 transactionPosition |= (dp[8] << 10);
@@ -217,16 +214,15 @@ public interface Txref {
         }
 
         // extract the TXO index from the decoded data part
-        static int extractTxoIndex(DecodedResult hd) {
-            if(hd.getDp().length < 12) {
+        static int extractTxoIndex(char[] dp) {
+            if(dp.length < 12) {
                 // non-extended txrefs don't store the txoIndex, so just return 0
                 return 0;
             }
 
-            char version = extractVersion(hd);
+            char version = extractVersion(dp);
 
             if(version == 0) {
-                char[] dp = hd.getDp();
                 int txoIndex = dp[9];
                 txoIndex |= (dp[10] << 5);
                 txoIndex |= (dp[11] << 10);
@@ -334,7 +330,7 @@ public interface Txref {
         static LocationData txrefDecode(String txref) {
             String txrefClean = Bech32.stripUnknownChars(txref);
             txrefClean = impl.addHrpIfNeeded(txrefClean);
-            DecodedResult hd = Bech32.decode(txrefClean);
+            design.contract.bech32.DecodedResult hd = Bech32.decode(txrefClean);
 
             if(hd.getHrp() == null) {
                 throw new RuntimeException("decoding failed");
@@ -348,15 +344,15 @@ public interface Txref {
             LocationData result = new LocationData(
                     hd.getHrp(),
                     impl.prettyPrint(txrefClean, hd.getHrp().length()),
-                    impl.extractBlockHeight(hd),
-                    impl.extractTransactionPosition(hd),
-                    impl.extractTxoIndex(hd),
-                    impl.extractMagicCode(hd));
+                    impl.extractBlockHeight(hd.getDp()),
+                    impl.extractTransactionPosition(hd.getDp()),
+                    impl.extractTxoIndex(hd.getDp()),
+                    impl.extractMagicCode(hd.getDp()));
 
-            if(hd.getEncoding() == DecodedResult.Encoding.BECH32M) {
+            if(hd.getEncoding() == design.contract.bech32.DecodedResult.Encoding.BECH32M) {
                 result.setEncoding(LocationData.Encoding.BECH32M);
             }
-            else if(hd.getEncoding() == DecodedResult.Encoding.BECH32) {
+            else if(hd.getEncoding() == design.contract.bech32.DecodedResult.Encoding.BECH32) {
                 result.setEncoding(LocationData.Encoding.BECH32);
             }
 

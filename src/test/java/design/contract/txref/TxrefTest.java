@@ -199,128 +199,128 @@ public class TxrefTest {
     @Test(expected = NullPointerException.class)
     public void extractMagicCode_withNullHrpAndDp_shouldThrow() {
         design.contract.bech32.DecodedResult decodedResult = null;
-        Txref.impl.extractMagicCode(decodedResult);
+        Txref.impl.extractMagicCode(decodedResult.getDp());
     }
 
     @Test(expected = NullPointerException.class)
     public void extractMagicCode_withEmptyHrpAndDp_shouldThrow() {
         design.contract.bech32.DecodedResult decodedResult = new design.contract.bech32.DecodedResult();
-        Txref.impl.extractMagicCode(decodedResult);
+        Txref.impl.extractMagicCode(decodedResult.getDp());
     }
 
     @Test
     public void extractMagicCode_mainnet() {
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1rqqqqqqqqwtvvjr");
-        assertEquals(Txref.MAGIC_BTC_MAIN, Txref.impl.extractMagicCode(decodedResult));
+        assertEquals(Txref.MAGIC_BTC_MAIN, Txref.impl.extractMagicCode(decodedResult.getDp()));
     }
 
     @Test
     public void extractMagicCode_testnet() {
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("txtest1xjk0uqayzghlp89");
-        assertEquals(Txref.MAGIC_BTC_TEST, Txref.impl.extractMagicCode(decodedResult));
+        assertEquals(Txref.MAGIC_BTC_TEST, Txref.impl.extractMagicCode(decodedResult.getDp()));
     }
 
     @Test(expected = NullPointerException.class)
     public void extractVersion_withNullHrpAndDp_shouldThrow() {
         design.contract.bech32.DecodedResult decodedResult = null;
-        Txref.impl.extractVersion(decodedResult);
+        Txref.impl.extractVersion(decodedResult.getDp());
     }
 
     @Test(expected = NullPointerException.class)
     public void extractVersion_withEmptyHrpAndDp_shouldThrow() {
         design.contract.bech32.DecodedResult decodedResult = new design.contract.bech32.DecodedResult();
-        Txref.impl.extractVersion(decodedResult);
+        Txref.impl.extractVersion(decodedResult.getDp());
     }
 
     @Test
     public void extractVersion_mainnet() {
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1rqqqqqqqqwtvvjr");
-        assertEquals(0, Txref.impl.extractVersion(decodedResult));
+        assertEquals(0, Txref.impl.extractVersion(decodedResult.getDp()));
     }
 
     @Test
     public void extractVersion_testnet() {
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("txtest1xjk0uqayzghlp89");
-        assertEquals(0, Txref.impl.extractVersion(decodedResult));
+        assertEquals(0, Txref.impl.extractVersion(decodedResult.getDp()));
     }
 
     @Test(expected = NullPointerException.class)
     public void extractBlockHeight_withNullHrpAndDp_shouldThrow() {
         design.contract.bech32.DecodedResult decodedResult = null;
-        Txref.impl.extractBlockHeight(decodedResult);
+        Txref.impl.extractBlockHeight(decodedResult.getDp());
     }
 
     @Test(expected = NullPointerException.class)
     public void extractBlockHeight_withEmptyHrpAndDp_shouldThrow() {
         design.contract.bech32.DecodedResult decodedResult = new design.contract.bech32.DecodedResult();
-        Txref.impl.extractBlockHeight(decodedResult);
+        Txref.impl.extractBlockHeight(decodedResult.getDp());
     }
 
     @Test
     public void extractBlockHeight() {
 
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1rqqqqqqqqwtvvjr");
-        int blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        int blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(0, blockHeight);
 
         decodedResult = Bech32.decode("tx1rqqqqqlllj687n2");
-        blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(0, blockHeight);
 
         decodedResult = Bech32.decode("tx1r7llllqqqatsvx9");
-        blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(0xFFFFFF, blockHeight);
 
         decodedResult = Bech32.decode("tx1r7lllllllp6m78v");
-        blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(0xFFFFFF, blockHeight);
 
         decodedResult = Bech32.decode("tx1rjk0uqayz9l7m9m");
-        blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(466793, blockHeight);
 
         decodedResult = Bech32.decode("txtest1xjk0uqayzghlp89");
-        blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(466793, blockHeight);
     }
 
     @Test(expected = NullPointerException.class)
     public void extractTransactionPosition_withNullHrpAndDp_shouldThrow() {
         design.contract.bech32.DecodedResult decodedResult = null;
-        Txref.impl.extractTransactionPosition(decodedResult);
+        Txref.impl.extractTransactionPosition(decodedResult.getDp());
     }
 
     @Test(expected = NullPointerException.class)
     public void extractTransactionPosition_withEmptyHrpAndDp_shouldThrow() {
         design.contract.bech32.DecodedResult decodedResult = new design.contract.bech32.DecodedResult();
-        Txref.impl.extractTransactionPosition(decodedResult);
+        Txref.impl.extractTransactionPosition(decodedResult.getDp());
     }
 
     @Test
     public void extractTransactionPosition() {
 
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1rqqqqqqqqwtvvjr");
-        int transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        int transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(0, transactionPosition);
 
         decodedResult = Bech32.decode("tx1rqqqqqlllj687n2");
-        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(0x7FFF, transactionPosition);
 
         decodedResult = Bech32.decode("tx1r7llllqqqatsvx9");
-        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(0, transactionPosition);
 
         decodedResult = Bech32.decode("tx1r7lllllllp6m78v");
-        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(0x7FFF, transactionPosition);
 
         decodedResult = Bech32.decode("tx1rjk0uqayz9l7m9m");
-        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(2205, transactionPosition);
 
         decodedResult = Bech32.decode("txtest1xjk0uqayzghlp89");
-        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(2205, transactionPosition);
     }
 
@@ -329,27 +329,27 @@ public class TxrefTest {
         // these will all return 0 as none are extended txrefs
 
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1rqqqqqqqqwtvvjr");
-        int txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        int txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0, txoIndex);
 
         decodedResult = Bech32.decode("tx1rqqqqqlllj687n2");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0, txoIndex);
 
         decodedResult = Bech32.decode("tx1r7llllqqqatsvx9");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0, txoIndex);
 
         decodedResult = Bech32.decode("tx1r7lllllllp6m78v");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0, txoIndex);
 
         decodedResult = Bech32.decode("tx1rjk0uqayz9l7m9m");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0, txoIndex);
 
         decodedResult = Bech32.decode("txtest1xjk0uqayzghlp89");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0, txoIndex);
     }
 
@@ -469,32 +469,32 @@ public class TxrefTest {
     @Test
     public void extractExtendedMagicCode_mainnet() {
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1yjk0uqayzu4xx22sy6");
-        assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, Txref.impl.extractMagicCode(decodedResult));
+        assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, Txref.impl.extractMagicCode(decodedResult.getDp()));
     }
 
     @Test
     public void extractExtendedMagicCode_testnet() {
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("txtest18jk0uqayzu4xgj9m8a");
-        assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, Txref.impl.extractMagicCode(decodedResult));
+        assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, Txref.impl.extractMagicCode(decodedResult.getDp()));
     }
 
     @Test
     public void extractExtendedBlockHeight() {
 
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1yqqqqqqqqqqqrvum0c");
-        int blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        int blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(0, blockHeight);
 
         decodedResult = Bech32.decode("tx1y7llllqqqqqqggjgw6");
-        blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(0xFFFFFF, blockHeight);
 
         decodedResult = Bech32.decode("tx1yjk0uqayzu4xx22sy6");
-        blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(466793, blockHeight);
 
         decodedResult = Bech32.decode("txtest18jk0uqayzu4xgj9m8a");
-        blockHeight = Txref.impl.extractBlockHeight(decodedResult);
+        blockHeight = Txref.impl.extractBlockHeight(decodedResult.getDp());
         assertEquals(466793, blockHeight);
     }
 
@@ -502,42 +502,42 @@ public class TxrefTest {
     public void extractExtendedTransactionPosition() {
 
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1yqqqqqqqqqqqrvum0c");
-        int transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        int transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(0, transactionPosition);
 
         decodedResult = Bech32.decode("tx1yqqqqqlllqqqen8x05");
-        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(0x7FFF, transactionPosition);
 
         decodedResult = Bech32.decode("tx1yjk0uqayzu4xx22sy6");
-        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(2205, transactionPosition);
 
         decodedResult = Bech32.decode("txtest18jk0uqayzu4xgj9m8a");
-        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult);
+        transactionPosition = Txref.impl.extractTransactionPosition(decodedResult.getDp());
         assertEquals(2205, transactionPosition);
     }
 
     @Test
     public void extractExtendedTxoIndex() {
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1yqqqqqqqqqqqrvum0c");
-        int txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        int txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0, txoIndex);
 
         decodedResult = Bech32.decode("tx1yqqqqqqqqpqqpw4vkq");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(1, txoIndex);
 
         decodedResult = Bech32.decode("tx1yqqqqqqqqu4xj4f2xe");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0x1ABC, txoIndex);
 
         decodedResult = Bech32.decode("tx1yjk0uqayzu4xx22sy6");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0x1ABC, txoIndex);
 
         decodedResult = Bech32.decode("txtest18jk0uqayzu4xgj9m8a");
-        txoIndex = Txref.impl.extractTxoIndex(decodedResult);
+        txoIndex = Txref.impl.extractTxoIndex(decodedResult.getDp());
         assertEquals(0x1ABC, txoIndex);
     }
 

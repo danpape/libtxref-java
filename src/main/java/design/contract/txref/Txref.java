@@ -327,7 +327,7 @@ public interface Txref {
             return prettyPrint(result, hrp.length());
         }
 
-        static LocationData txrefDecode(String txref) {
+        static DecodedResult txrefDecode(String txref) {
             String txrefClean = Bech32.stripUnknownChars(txref);
             txrefClean = impl.addHrpIfNeeded(txrefClean);
             design.contract.bech32.DecodedResult hd = Bech32.decode(txrefClean);
@@ -341,7 +341,7 @@ public interface Txref {
                 throw new RuntimeException("decoded dp size is incorrect");
             }
 
-            LocationData result = new LocationData(
+            DecodedResult result = new DecodedResult(
                     hd.getHrp(),
                     impl.prettyPrint(txrefClean, hd.getHrp().length()),
                     impl.extractBlockHeight(hd.getDp()),
@@ -350,10 +350,10 @@ public interface Txref {
                     impl.extractMagicCode(hd.getDp()));
 
             if(hd.getEncoding() == design.contract.bech32.DecodedResult.Encoding.BECH32M) {
-                result.setEncoding(LocationData.Encoding.BECH32M);
+                result.setEncoding(DecodedResult.Encoding.BECH32M);
             }
             else if(hd.getEncoding() == design.contract.bech32.DecodedResult.Encoding.BECH32) {
-                result.setEncoding(LocationData.Encoding.BECH32);
+                result.setEncoding(DecodedResult.Encoding.BECH32);
             }
 
             return result;
@@ -498,7 +498,7 @@ public interface Txref {
 
     // decodes a bech32 encoded "transaction position reference" (txref) and
     // returns identifying data
-    static LocationData decode(String txref) {
+    static DecodedResult decode(String txref) {
         return impl.txrefDecode(txref);
     }
 

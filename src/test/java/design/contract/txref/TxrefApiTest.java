@@ -55,7 +55,7 @@ public class TxrefApiTest {
 
     @Test
     public void decode_mainnet() {
-        LocationData ld = Txref.decode("tx1:rjk0-uqay-z9l7-m9m");
+        DecodedResult ld = Txref.decode("tx1:rjk0-uqay-z9l7-m9m");
         assertEquals(Txref.BECH32_HRP_MAIN, ld.getHrp());
         assertEquals(Txref.MAGIC_BTC_MAIN, ld.getMagicCode());
         assertEquals(466793, ld.getBlockHeight());
@@ -65,7 +65,7 @@ public class TxrefApiTest {
 
     @Test
     public void decode_testnet() {
-        LocationData ld = Txref.decode("txtest1:xjk0-uqay-zghl-p89");
+        DecodedResult ld = Txref.decode("txtest1:xjk0-uqay-zghl-p89");
         assertEquals(Txref.BECH32_HRP_TEST, ld.getHrp());
         assertEquals(Txref.MAGIC_BTC_TEST, ld.getMagicCode());
         assertEquals(466793, ld.getBlockHeight());
@@ -75,7 +75,7 @@ public class TxrefApiTest {
 
     @Test
     public void decode_extended_mainnet() {
-        LocationData ld = Txref.decode("tx1:yjk0-uqay-zu4x-x22s-y6");
+        DecodedResult ld = Txref.decode("tx1:yjk0-uqay-zu4x-x22s-y6");
         assertEquals(Txref.BECH32_HRP_MAIN, ld.getHrp());
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, ld.getMagicCode());
         assertEquals(466793, ld.getBlockHeight());
@@ -85,7 +85,7 @@ public class TxrefApiTest {
 
     @Test
     public void decode_extended_testnet() {
-        LocationData ld = Txref.decode("txtest1:8jk0-uqay-zu4x-gj9m-8a");
+        DecodedResult ld = Txref.decode("txtest1:8jk0-uqay-zu4x-gj9m-8a");
         assertEquals(Txref.BECH32_HRP_TEST, ld.getHrp());
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, ld.getMagicCode());
         assertEquals(466793, ld.getBlockHeight());

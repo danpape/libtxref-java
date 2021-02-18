@@ -1,7 +1,6 @@
 package design.contract.txref;
 
 import design.contract.bech32.Bech32;
-import design.contract.bech32.DecodedResult;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -395,7 +394,7 @@ public class TxrefTest {
 
     @Test
     public void txrefDecode_mainnet() {
-        LocationData ld;
+        DecodedResult ld;
 
         ld = Txref.impl.txrefDecode("tx1:rqqq-qqqq-qwtv-vjr");
         assertEquals(Txref.MAGIC_BTC_MAIN, ld.getMagicCode());
@@ -430,7 +429,7 @@ public class TxrefTest {
 
     @Test
     public void txrefDecode_testnet() {
-        LocationData ld;
+        DecodedResult ld;
 
         ld = Txref.impl.txrefDecode("txtest1:xqqq-qqqq-qrrd-ksa");
         assertEquals(Txref.MAGIC_BTC_TEST, ld.getMagicCode());
@@ -621,7 +620,7 @@ public class TxrefTest {
 
     @Test
     public void txrefDecode_extended_mainnet() {
-        LocationData ld;
+        DecodedResult ld;
 
         ld = Txref.impl.txrefDecode("tx1:yqqq-qqqq-qqqq-rvum-0c");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, ld.getMagicCode());
@@ -695,7 +694,7 @@ public class TxrefTest {
 
     @Test
     public void txrefDecode_extended_testnet() {
-        LocationData ld;
+        DecodedResult ld;
 
         ld = Txref.impl.txrefDecode("txtest1:8qqq-qqqq-qqqq-d5ns-vl");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, ld.getMagicCode());
@@ -859,7 +858,7 @@ public class TxrefTest {
     @Test
     public void txrefDecode_bip_examples() {
 
-        LocationData ld;
+        DecodedResult ld;
 
         // Genesis Coinbase Transaction (Transaction #0 of Block #0):
         ld = Txref.impl.txrefDecode("tx1:rqqq-qqqq-qwtv-vjr");
@@ -1068,13 +1067,13 @@ public class TxrefTest {
     @Test
     public void txrefDecode_checkEncoding() {
 
-        LocationData ld;
+        DecodedResult ld;
 
         ld = Txref.impl.txrefDecode("txtest1:8jk0-uqay-zu4x-gj9m-8a");
-        assertEquals(LocationData.Encoding.BECH32M, ld.getEncoding());
+        assertEquals(DecodedResult.Encoding.BECH32M, ld.getEncoding());
 
         ld = Txref.impl.txrefDecode("txtest1:8jk0-uqay-zu4x-aw4h-zl");
-        assertEquals(LocationData.Encoding.BECH32, ld.getEncoding());
+        assertEquals(DecodedResult.Encoding.BECH32, ld.getEncoding());
 
     }
 

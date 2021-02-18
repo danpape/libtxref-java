@@ -2,7 +2,7 @@ package design.contract.txref;
 
 import java.util.Objects;
 
-public class LocationData {
+public class DecodedResult {
 
     private String hrp;
     private String txref;
@@ -12,7 +12,7 @@ public class LocationData {
     private int magicCode;
     private Encoding encoding;
 
-    public LocationData(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode) {
+    public DecodedResult(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode) {
         this.hrp = hrp;
         this.txref = txref;
         this.blockHeight = blockHeight;
@@ -22,7 +22,7 @@ public class LocationData {
         this.encoding = Encoding.INVALID;
     }
 
-    public LocationData(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode, Encoding encoding) {
+    public DecodedResult(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode, Encoding encoding) {
         this.hrp = hrp;
         this.txref = txref;
         this.blockHeight = blockHeight;
@@ -94,7 +94,7 @@ public class LocationData {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        LocationData that = (LocationData) o;
+        DecodedResult that = (DecodedResult) o;
         return blockHeight == that.blockHeight &&
                 transactionPosition == that.transactionPosition &&
                 txoIndex == that.txoIndex &&

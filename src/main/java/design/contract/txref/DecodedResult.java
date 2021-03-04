@@ -11,6 +11,7 @@ public class DecodedResult {
     private int txoIndex;
     private int magicCode;
     private Encoding encoding;
+    private String commentary;
 
     public DecodedResult(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode) {
         this.hrp = hrp;
@@ -20,16 +21,7 @@ public class DecodedResult {
         this.txoIndex = txoIndex;
         this.magicCode = magicCode;
         this.encoding = Encoding.INVALID;
-    }
-
-    public DecodedResult(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode, Encoding encoding) {
-        this.hrp = hrp;
-        this.txref = txref;
-        this.blockHeight = blockHeight;
-        this.transactionPosition = transactionPosition;
-        this.txoIndex = txoIndex;
-        this.magicCode = magicCode;
-        this.encoding = encoding;
+        this.commentary = "";
     }
 
     public String getHrp() {
@@ -88,6 +80,14 @@ public class DecodedResult {
         this.encoding = encoding;
     }
 
+    public String getCommentary() {
+        return commentary;
+    }
+
+    public void setCommentary(String commentary) {
+        this.commentary = commentary;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -101,12 +101,13 @@ public class DecodedResult {
                 magicCode == that.magicCode &&
                 Objects.equals(hrp, that.hrp) &&
                 Objects.equals(txref, that.txref) &&
+                Objects.equals(commentary, that.commentary) &&
                 encoding == that.encoding;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hrp, txref, blockHeight, transactionPosition, txoIndex, magicCode, encoding);
+        return Objects.hash(hrp, txref, blockHeight, transactionPosition, txoIndex, magicCode, encoding, commentary);
     }
 
     public enum Encoding {

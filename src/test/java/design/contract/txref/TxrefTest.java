@@ -319,6 +319,17 @@ public class TxrefTest {
         assertEquals(2205, transactionPosition);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void extractTxoIndex_withNullData_shouldThrow() {
+        Txref.Impl.extractTxoIndex(null);
+    }
+
+    @Test
+    public void extractTxoIndex_withEmptyData_shouldReturnZero() {
+        char[] dp = new char[0];
+        assertEquals(0, Txref.Impl.extractTxoIndex(dp));
+    }
+
     @Test
     public void extractTxoIndex() {
         // these will all return 0 as none are extended txrefs

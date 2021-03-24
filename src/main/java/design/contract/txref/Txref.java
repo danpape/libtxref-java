@@ -1,69 +1,65 @@
 package design.contract.txref;
 
 import design.contract.bech32.Bech32;
-import design.contract.bech32.HrpAndDp;
 
 import java.util.Arrays;
 
-public interface Txref {
+public class Txref {
 
-    interface limits {
-        int TXREF_STRING_MIN_LENGTH = 18;                    // ex: "tx1rqqqqqqqqmhuqhp"
-        int TXREF_STRING_NO_HRP_MIN_LENGTH = 15;             // ex: "rqqqqqqqqmhuqhp"
+    public static final class Limits {
+        public static final int TXREF_STRING_MIN_LENGTH = 18;                    // ex: "tx1rqqqqqqqqmhuqhp"
+        public static final int TXREF_STRING_NO_HRP_MIN_LENGTH = 15;             // ex: "rqqqqqqqqmhuqhp"
 
-        int TXREF_EXT_STRING_MIN_LENGTH = 21;                // ex: "tx1yqqqqqqqqqqqksvh26"
-        int TXREF_EXT_STRING_NO_HRP_MIN_LENGTH = 18;         // ex: "yqqqqqqqqqqqksvh26"
+        public static final int TXREF_EXT_STRING_MIN_LENGTH = 21;                // ex: "tx1yqqqqqqqqqqqksvh26"
+        public static final int TXREF_EXT_STRING_NO_HRP_MIN_LENGTH = 18;         // ex: "yqqqqqqqqqqqksvh26"
 
-        int TXREF_STRING_MIN_LENGTH_TESTNET = 22;            // ex: "txtest1rqqqqqqqqmhuqhp"
+        public static final int TXREF_STRING_MIN_LENGTH_TESTNET = 22;            // ex: "txtest1rqqqqqqqqmhuqhp"
 
-        int TXREF_EXT_STRING_MIN_LENGTH_TESTNET = 25;        // ex: "txtest18jk0uqayzu4xaw4hzl"
+        public static final int TXREF_EXT_STRING_MIN_LENGTH_TESTNET = 25;        // ex: "txtest18jk0uqayzu4xaw4hzl"
 
-        int TXREF_EXTRA_PRETTY_PRINT_CHARS = 4;              // ex: "tx1:rqqq-qqqq-qmhu-qhp"
-        int TXREF_EXT_EXTRA_PRETTY_PRINT_CHARS = 5;          // ex: "tx1:yqqq-qqqq-qqqq-ksvh-26"
+        public static final int MAX_BLOCK_HEIGHT         = 0xFFFFFF; // 16777215
 
-        int TXREF_MAX_LENGTH =
-                TXREF_EXT_STRING_MIN_LENGTH_TESTNET + TXREF_EXT_EXTRA_PRETTY_PRINT_CHARS;
+        public static final int MAX_TRANSACTION_POSITION = 0x7FFF;   // 32767
 
-        int MAX_BLOCK_HEIGHT         = 0xFFFFFF; // 16777215
+        public static final int MAX_TXO_INDEX            = 0x7FFF;   // 32767
 
-        int MAX_TRANSACTION_POSITION = 0x7FFF;   // 32767
+        public static final int MAX_MAGIC_CODE           = 0x1F;
 
-        int MAX_TXO_INDEX            = 0x7FFF;   // 32767
+        public static final int DATA_SIZE                = 9;
 
-        int MAX_MAGIC_CODE           = 0x1F;
+        public static final int DATA_EXTENDED_SIZE       = 12;
 
-        int DATA_SIZE                = 9;
-
-        int DATA_EXTENDED_SIZE       = 12;
-
+        private Limits() {
+            throw new IllegalStateException("should not instantiate");
+        }
     }
 
     // bech32 "human readable part"s
-    String BECH32_HRP_MAIN = "tx";
-    String BECH32_HRP_TEST = "txtest";
+    static final String BECH32_HRP_MAIN = "tx";
+    static final String BECH32_HRP_TEST = "txtest";
 
     // magic codes used for chain identification and namespacing
-    char MAGIC_BTC_MAIN = 0x3;
-    char MAGIC_BTC_MAIN_EXTENDED = 0x4;
-    char MAGIC_BTC_TEST = 0x6;
-    char MAGIC_BTC_TEST_EXTENDED = 0x7;
+    static final char MAGIC_BTC_MAIN = 0x3;
+    static final char MAGIC_BTC_MAIN_EXTENDED = 0x4;
+    static final char MAGIC_BTC_TEST = 0x6;
+    static final char MAGIC_BTC_TEST_EXTENDED = 0x7;
 
     // characters used when pretty-printing
-    char colon = ':';
-    char hyphen = '-';
+    static final char COLON = ':';
+    static final char HYPHEN = '-';
 
 
-    enum InputParam { unknown_param, address_param, txid_param, txref_param, txrefext_param }
+    enum InputParam {UNKNOWN, ADDRESS, TXID, TXREF, TXREFEXT}
 
 
-    interface impl {
+    public static final class Impl {
 
         static boolean isStandardSize(long dataSize) {
-            return dataSize == limits.DATA_SIZE;
+            return dataSize == Limits.DATA_SIZE;
         }
 
         static boolean isExtendedSize(long dataSize) {
-            return dataSize == limits.DATA_EXTENDED_SIZE;
+            return dataSize == Limits.DATA_EXTENDED_SIZE;
         }
 
         static boolean isDataSizeValid(long dataSize) {
@@ -72,39 +68,38 @@ public interface Txref {
 
         // is a txref string, missing the HRP, still of a valid length for a txref?
         static boolean isLengthValid(long length) {
-            return length == limits.TXREF_STRING_NO_HRP_MIN_LENGTH ||
-                    length == limits.TXREF_EXT_STRING_NO_HRP_MIN_LENGTH;
+            return length == Limits.TXREF_STRING_NO_HRP_MIN_LENGTH ||
+                    length == Limits.TXREF_EXT_STRING_NO_HRP_MIN_LENGTH;
         }
-
 
         // a block's height can only be in a certain range
         static void checkBlockHeightRange(int blockHeight) {
-            if(blockHeight < 0 || blockHeight > limits.MAX_BLOCK_HEIGHT)
-                throw new RuntimeException("block height is too large");
+            if(blockHeight < 0 || blockHeight > Limits.MAX_BLOCK_HEIGHT)
+                throw new IllegalArgumentException("block height is too large");
         }
 
         // a transaction's position can only be in a certain range
         static void checkTransactionPositionRange(int transactionPosition) {
-            if(transactionPosition < 0 || transactionPosition > limits.MAX_TRANSACTION_POSITION)
-                throw new RuntimeException("transaction position is too large");
+            if(transactionPosition < 0 || transactionPosition > Limits.MAX_TRANSACTION_POSITION)
+                throw new IllegalArgumentException("transaction position is too large");
         }
 
         // a TXO's index can only be in a certain range
         static void checkTxoIndexRange(int txoIndex) {
-            if(txoIndex < 0 || txoIndex > limits.MAX_TXO_INDEX)
-                throw new RuntimeException("txo index is too large");
+            if(txoIndex < 0 || txoIndex > Limits.MAX_TXO_INDEX)
+                throw new IllegalArgumentException("txo index is too large");
         }
 
         // the magic code can only be in a certain range
         static void checkMagicCodeRange(int magicCode) {
-            if(magicCode < 0 || magicCode > limits.MAX_MAGIC_CODE)
-                throw new RuntimeException("magic code is too large");
+            if(magicCode < 0 || magicCode > Limits.MAX_MAGIC_CODE)
+                throw new IllegalArgumentException("magic code is too large");
         }
 
         // check that the magic code is for one of the extended txrefs
         static void checkExtendedMagicCode(int magicCode) {
             if(magicCode != MAGIC_BTC_MAIN_EXTENDED && magicCode != MAGIC_BTC_TEST_EXTENDED)
-                throw new RuntimeException("magic code does not support extended txrefs");
+                throw new IllegalArgumentException("magic code does not support extended txrefs");
         }
 
         // separate groups of chars in the txref string to make it look nicer
@@ -119,22 +114,22 @@ public interface Txref {
                 int hrplen,
                 int separatorOffset) {
 
-            if(hrplen > Bech32.limits.MAX_HRP_LENGTH) {
-                throw new RuntimeException("HRP must be less than 84 characters long");
+            if(hrplen > Bech32.Limits.MAX_HRP_LENGTH) {
+                throw new IllegalArgumentException("HRP must be less than 84 characters long");
             }
 
             if(separatorOffset < 1) {
-                throw new RuntimeException("separatorOffset must be > 0");
+                throw new IllegalArgumentException("separatorOffset must be > 0");
             }
 
             if(raw.length() < 2)
-                throw new RuntimeException("Can't add separator characters to strings with length < 2");
+                throw new IllegalArgumentException("Can't add separator characters to strings with length < 2");
 
             if(raw.length() == hrplen) // no separators needed
                 return raw;
 
             if(raw.length() < hrplen)
-                throw new RuntimeException("HRP length can't be greater than input length");
+                throw new IllegalArgumentException("HRP length can't be greater than input length");
 
             // number of separators that will be inserted
             int numSeparators = (raw.length() - hrplen - 1) / separatorOffset;
@@ -144,7 +139,7 @@ public interface Txref {
 
             // create output string, starting with all hyphens
             char[] output = new char[outputLength];
-            Arrays.fill(output, hyphen);
+            Arrays.fill(output, HYPHEN);
 
             // copy over the raw string, skipping every offset # chars, after the HRP
             int rawPos = 0;
@@ -169,26 +164,25 @@ public interface Txref {
             int hrpPlusSeparatorLength = hrplen + 1;         // 1 for '1'
             int hrpPlusSeparatorAndColonLength = hrplen + 2; // 2 for '1' and ':'
             return addGroupSeparators(
-                    plain.substring(0, hrpPlusSeparatorLength) + colon + plain.substring(hrpPlusSeparatorLength),
+                    plain.substring(0, hrpPlusSeparatorLength) + COLON + plain.substring(hrpPlusSeparatorLength),
                     hrpPlusSeparatorAndColonLength);
         }
 
         // extract the magic code from the decoded data part
-        static char extractMagicCode(HrpAndDp hd) {
-            return hd.getDp()[0];
+        static char extractMagicCode(char[] dp) {
+            return dp[0];
         }
 
         // extract the version from the decoded data part
-        static char extractVersion(HrpAndDp hd) {
-            return (char)(hd.getDp()[1] & 0x1);
+        static char extractVersion(char[] dp) {
+            return (char)(dp[1] & 0x1);
         }
 
         // extract the block height from the decoded data part
-        static int extractBlockHeight(HrpAndDp hd) {
-            char version = extractVersion(hd);
+        static int extractBlockHeight(char[] dp) {
+            char version = extractVersion(dp);
 
             if(version == 0) {
-                char[] dp = hd.getDp();
                 int blockHeight = (dp[1] >> 1);
                 blockHeight |= (dp[2] << 4);
                 blockHeight |= (dp[3] << 9);
@@ -197,44 +191,42 @@ public interface Txref {
                 return blockHeight;
             }
             else {
-                throw new RuntimeException("Unknown txref version detected: " + version);
+                throw new IllegalArgumentException("Unknown txref version detected: " + version);
             }
         }
 
         // extract the transaction position from the decoded data part
-        static int extractTransactionPosition(HrpAndDp hd) {
-            char version = extractVersion(hd);
+        static int extractTransactionPosition(char[] dp) {
+            char version = extractVersion(dp);
 
             if(version == 0) {
-                char[] dp = hd.getDp();
                 int transactionPosition = dp[6];
                 transactionPosition |= (dp[7] << 5);
                 transactionPosition |= (dp[8] << 10);
                 return transactionPosition;
             }
             else {
-                throw new RuntimeException("Unknown txref version detected: " + version);
+                throw new IllegalArgumentException("Unknown txref version detected: " + version);
             }
         }
 
         // extract the TXO index from the decoded data part
-        static int extractTxoIndex(HrpAndDp hd) {
-            if(hd.getDp().length < 12) {
+        static int extractTxoIndex(char[] dp) {
+            if(dp.length < 12) {
                 // non-extended txrefs don't store the txoIndex, so just return 0
                 return 0;
             }
 
-            char version = extractVersion(hd);
+            char version = extractVersion(dp);
 
             if(version == 0) {
-                char[] dp = hd.getDp();
                 int txoIndex = dp[9];
                 txoIndex |= (dp[10] << 5);
                 txoIndex |= (dp[11] << 10);
                 return txoIndex;
             }
             else {
-                throw new RuntimeException("Unknown txref version detected: " + version);
+                throw new IllegalArgumentException("Unknown txref version detected: " + version);
             }
         }
 
@@ -242,10 +234,10 @@ public interface Txref {
         // assumes that stripUnknownChars() has already been called
         static String addHrpIfNeeded(final String txref) {
             if(isLengthValid(txref.length()) && (txref.charAt(0) == 'r' || txref.charAt(0) == 'y')) {
-                return Txref.BECH32_HRP_MAIN + Bech32.separator + txref;
+                return Txref.BECH32_HRP_MAIN + Bech32.SEPARATOR + txref;
             }
             if(isLengthValid(txref.length()) && (txref.charAt(0) == 'x' || txref.charAt(0) == '8')) {
-                return Txref.BECH32_HRP_TEST + Bech32.separator + txref;
+                return Txref.BECH32_HRP_TEST + Bech32.SEPARATOR + txref;
             }
             return txref;
         }
@@ -260,7 +252,7 @@ public interface Txref {
             checkTransactionPositionRange(transactionPosition);
             checkMagicCodeRange(magicCode);
 
-            char[] dp = new char[limits.DATA_SIZE];
+            char[] dp = new char[Limits.DATA_SIZE];
 
             // set the magic code
             dp[0] = (char) magicCode;                        // sets 1-3 bits in the 1st 5 bits
@@ -300,7 +292,7 @@ public interface Txref {
             checkMagicCodeRange(magicCode);
             checkExtendedMagicCode(magicCode);
 
-            char[] dp = new char[limits.DATA_EXTENDED_SIZE];
+            char[] dp = new char[Limits.DATA_EXTENDED_SIZE];
 
             // set the magic code
             dp[0] = (char) magicCode;                      // sets 1-3 bits in the 1st 5 bits
@@ -332,24 +324,46 @@ public interface Txref {
             return prettyPrint(result, hrp.length());
         }
 
-        static LocationData txrefDecode(String txref) {
+        static DecodedResult txrefDecode(String txref) {
             String txrefClean = Bech32.stripUnknownChars(txref);
-            txrefClean = impl.addHrpIfNeeded(txrefClean);
-            HrpAndDp hd = Bech32.decode(txrefClean);
+            txrefClean = Impl.addHrpIfNeeded(txrefClean);
+            design.contract.bech32.DecodedResult bech32DecodedResult = Bech32.decode(txrefClean);
 
-            int dataSize = hd.getDp().length;
-            if(!impl.isDataSizeValid(dataSize)) {
-                throw new RuntimeException("decoded dp size is incorrect");
+            if(bech32DecodedResult.getHrp() == null) {
+                throw new IllegalArgumentException("decoding failed");
             }
 
-            return new LocationData(
-                    hd.getHrp(),
-                    impl.prettyPrint(txrefClean, hd.getHrp().length()),
-                    impl.extractBlockHeight(hd),
-                    impl.extractTransactionPosition(hd),
-                    impl.extractTxoIndex(hd),
-                    impl.extractMagicCode(hd)
-            );
+            int dataSize = bech32DecodedResult.getDp().length;
+            if(!Impl.isDataSizeValid(dataSize)) {
+                throw new IllegalArgumentException("decoded dp size is incorrect");
+            }
+
+            DecodedResult result = new DecodedResult(
+                    bech32DecodedResult.getHrp(),
+                    Impl.prettyPrint(txrefClean, bech32DecodedResult.getHrp().length()),
+                    Impl.extractBlockHeight(bech32DecodedResult.getDp()),
+                    Impl.extractTransactionPosition(bech32DecodedResult.getDp()),
+                    Impl.extractTxoIndex(bech32DecodedResult.getDp()),
+                    Impl.extractMagicCode(bech32DecodedResult.getDp()));
+
+            if(bech32DecodedResult.getEncoding() == design.contract.bech32.DecodedResult.Encoding.BECH32M) {
+                result.setEncoding(DecodedResult.Encoding.BECH32M);
+            }
+            else if(bech32DecodedResult.getEncoding() == design.contract.bech32.DecodedResult.Encoding.BECH32) {
+                result.setEncoding(DecodedResult.Encoding.BECH32);
+                String updatedTxref;
+                if(result.getMagicCode() == MAGIC_BTC_MAIN_EXTENDED || result.getMagicCode() == MAGIC_BTC_TEST_EXTENDED) {
+                    updatedTxref = txrefExtEncode(result.getHrp(), result.getMagicCode(), result.getBlockHeight(), result.getTransactionPosition(), result.getTxoIndex());
+                }
+                else {
+                    updatedTxref = txrefEncode(result.getHrp(), result.getMagicCode(), result.getBlockHeight(), result.getTransactionPosition());
+                }
+                result.setCommentary("The txref " + result.getTxref() +
+                        " uses an old encoding scheme and should be updated to " + updatedTxref +
+                        " See https://github.com/dcdpr/libtxref-java#regarding-bech32-checksums for more information.");
+            }
+
+            return result;
         }
 
         static InputParam classifyInputStringBase(final String str) {
@@ -358,13 +372,13 @@ public interface Txref {
             // characters, ex: dashes, periods
             String s = Bech32.stripUnknownChars(str);
 
-            if(s.length() == limits.TXREF_STRING_MIN_LENGTH || s.length() == limits.TXREF_STRING_MIN_LENGTH_TESTNET )
-                return InputParam.txref_param;
+            if(s.length() == Limits.TXREF_STRING_MIN_LENGTH || s.length() == Limits.TXREF_STRING_MIN_LENGTH_TESTNET )
+                return InputParam.TXREF;
 
-            if(s.length() == limits.TXREF_EXT_STRING_MIN_LENGTH || s.length() == limits.TXREF_EXT_STRING_MIN_LENGTH_TESTNET)
-                return InputParam.txrefext_param;
+            if(s.length() == Limits.TXREF_EXT_STRING_MIN_LENGTH || s.length() == Limits.TXREF_EXT_STRING_MIN_LENGTH_TESTNET)
+                return InputParam.TXREFEXT;
 
-            return InputParam.unknown_param;
+            return InputParam.UNKNOWN;
         }
 
         static InputParam classifyInputStringMissingHRP(final String str) {
@@ -373,16 +387,18 @@ public interface Txref {
             // characters, ex: dashes, periods
             String s = Bech32.stripUnknownChars(str);
 
-            if(s.length() == limits.TXREF_STRING_NO_HRP_MIN_LENGTH)
-                return InputParam.txref_param;
+            if(s.length() == Limits.TXREF_STRING_NO_HRP_MIN_LENGTH)
+                return InputParam.TXREF;
 
-            if(s.length() == limits.TXREF_EXT_STRING_NO_HRP_MIN_LENGTH)
-                return InputParam.txrefext_param;
+            if(s.length() == Limits.TXREF_EXT_STRING_NO_HRP_MIN_LENGTH)
+                return InputParam.TXREFEXT;
 
-            return InputParam.unknown_param;
+            return InputParam.UNKNOWN;
         }
 
-
+        private Impl() {
+            throw new IllegalStateException("should not instantiate");
+        }
     }
 
     // encodes the position of a confirmed bitcoin transaction on the
@@ -391,7 +407,7 @@ public interface Txref {
     // an extended reference is returned (txref-ext). If txoIndex is zero,
     // but forceExtended=true, then an extended reference is returned
     // (txref-ext).
-    static String encode(
+    public static String encode(
             int blockHeight,
             int transactionPosition,
             int txoIndex,
@@ -399,42 +415,42 @@ public interface Txref {
             final String hrp) {
 
         if(txoIndex == 0 && !forceExtended)
-            return impl.txrefEncode(hrp, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
+            return Impl.txrefEncode(hrp, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
 
-        return impl.txrefExtEncode(hrp, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(hrp, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
 
     }
 
-    static String encode(
+    public static String encode(
             int blockHeight,
             int transactionPosition,
             int txoIndex,
             boolean forceExtended) {
 
         if(txoIndex == 0 && !forceExtended)
-            return impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
 
-        return impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
 
     }
 
-    static String encode(
+    public static String encode(
             int blockHeight,
             int transactionPosition,
             int txoIndex) {
 
         if(txoIndex == 0)
-            return impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
 
-        return impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
 
     }
 
-    static String encode(
+    public static String encode(
             int blockHeight,
             int transactionPosition) {
 
-        return impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
+        return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
     }
 
     // encodes the position of a confirmed bitcoin transaction on the
@@ -443,7 +459,7 @@ public interface Txref {
     // an extended reference is returned (txref-ext). If txoIndex is zero,
     // but forceExtended=true, then an extended reference is returned
     // (txref-ext).
-    static String encodeTestnet(
+    public static String encodeTestnet(
             int blockHeight,
             int transactionPosition,
             int txoIndex,
@@ -451,96 +467,94 @@ public interface Txref {
             String hrp) {
 
         if(txoIndex == 0 && !forceExtended)
-            return impl.txrefEncode(hrp, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(hrp, MAGIC_BTC_TEST, blockHeight, transactionPosition);
 
-        return impl.txrefExtEncode(hrp, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(hrp, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
 
     }
 
-    static String encodeTestnet(
+    public static String encodeTestnet(
             int blockHeight,
             int transactionPosition,
             int txoIndex,
             boolean forceExtended) {
 
         if(txoIndex == 0 && !forceExtended)
-            return impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
 
-        return impl.txrefExtEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
 
     }
 
-    static String encodeTestnet(
+    public static String encodeTestnet(
             int blockHeight,
             int transactionPosition,
             int txoIndex) {
 
         if(txoIndex == 0)
-            return impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
 
-        return impl.txrefExtEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
 
     }
 
-    static String encodeTestnet(
+    public static String encodeTestnet(
             int blockHeight,
             int transactionPosition) {
 
-        return impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+        return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
     }
 
     // decodes a bech32 encoded "transaction position reference" (txref) and
     // returns identifying data
-    static LocationData decode(String txref) {
-        return impl.txrefDecode(txref);
+    public static DecodedResult decode(String txref) {
+        return Impl.txrefDecode(txref);
     }
 
     // determine if the input string is a Bitcoin address, txid, txref, or
     // txrefext_param. This is not meant to be an exhaustive test--should only be
     // used as a first pass to see what sort of string might be passed in as input.
-    static InputParam classifyInputString(final String str) {
+    public static InputParam classifyInputString(final String str) {
 
         if(str.isEmpty())
-            return InputParam.unknown_param;
+            return InputParam.UNKNOWN;
 
         // if exactly 64 chars in length, it is likely a transaction id
         if(str.length() == 64)
-            return InputParam.txid_param;
+            return InputParam.TXID;
 
         // if it starts with certain chars, and is of a certain length, it may be a bitcoin address
         char c0 = str.charAt(0);
         if(c0 == '1' || c0 == '3' || c0 == 'm' || c0 == 'n' || c0 == '2')
             if(str.length() >= 26 && str.length() < 36)
-                return InputParam.address_param;
+                return InputParam.ADDRESS;
 
         // check if it could be a standard txref or txrefext
-        InputParam baseResult = impl.classifyInputStringBase(str);
+        InputParam baseResult = Impl.classifyInputStringBase(str);
 
         // check if it could be a truncated txref or txrefext (missing the HRP)
-        InputParam missingResult = impl.classifyInputStringMissingHRP(str);
+        InputParam missingResult = Impl.classifyInputStringMissingHRP(str);
 
         // if one result is 'unknown' and the other isn't, then return the good one
-        if(baseResult != InputParam.unknown_param && missingResult == InputParam.unknown_param)
+        if(baseResult != InputParam.UNKNOWN && missingResult == InputParam.UNKNOWN)
             return baseResult;
-        if(baseResult == InputParam.unknown_param && missingResult != InputParam.unknown_param)
+        if(baseResult == InputParam.UNKNOWN && missingResult != InputParam.UNKNOWN)
             return missingResult;
 
         // special case: if baseResult is 'txref_param' and missingResult is 'txrefext_param' then
         // we need to dig deeper as TXREF_STRING_MIN_LENGTH == TXREF_EXT_STRING_NO_HRP_MIN_LENGTH
-        if (baseResult == InputParam.txref_param && missingResult == InputParam.txrefext_param) {
+        if (baseResult == InputParam.TXREF && missingResult == InputParam.TXREFEXT) {
             if (str.charAt(0) == Txref.BECH32_HRP_MAIN.charAt(0) &&     // 't'
                     str.charAt(1) == Txref.BECH32_HRP_MAIN.charAt(1) && // 'x'
-                    str.charAt(2) == Bech32.separator)                  // '1'
-                return InputParam.txref_param;
+                    str.charAt(2) == Bech32.SEPARATOR)                  // '1'
+                return InputParam.TXREF;
             else
-                return InputParam.txrefext_param;
+                return InputParam.TXREFEXT;
         }
 
         // otherwise, just return
-        assert(baseResult == InputParam.unknown_param);
+        assert(baseResult == InputParam.UNKNOWN);
         return baseResult;
     }
-
-
 
 }

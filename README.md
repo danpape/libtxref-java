@@ -147,15 +147,15 @@ mvn test
 
 The Bech32 data encoding format was first proposed by Pieter Wuille in early 2017 in
 [BIP 0173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki). Later, in November 2019, Pieter published
-some research regarding that an exponent used in the bech32 checksum algorithm (value = 1) may not be
+some research that a constant used in the bech32 checksum algorithm (value = 1) may not be
 optimal for the error detecting properties of bech32. In February 2021, Pieter published
-[BIP 0350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki) reporting that "exhaustive analysis" showed the best possible exponent value is
+[BIP 0350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki) reporting that "exhaustive analysis" showed the best possible constant value is
 0x2bc830a3. This improved variant of Bech32 is called "Bech32m".
 
 When decoding a txref, libtxref-java returns an enum value showing whether bech32m or bech32
 was used to encode. If the original bech32 variant is detected, libtxref-java also returns a 
 commentary string that can be shown to the user. This commentary will contain a new txref that represents
-the same transaction data, but using the new bech32 variant. This can be seen in the examples above.
+the same transaction data, but using the new bech32m variant. This can be seen in the examples above.
 
-When encoding data, libtxref-java will only use the new exponent value of 0x2bc830a3.
+When encoding data, libtxref-java will only use the new constant value of 0x2bc830a3.
 

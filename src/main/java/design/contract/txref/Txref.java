@@ -7,15 +7,15 @@ import java.util.Arrays;
 public class Txref {
 
     public static final class Limits {
-        public static final int TXREF_STRING_MIN_LENGTH = 18;                    // ex: "tx1rqqqqqqqqmhuqhp"
-        public static final int TXREF_STRING_NO_HRP_MIN_LENGTH = 15;             // ex: "rqqqqqqqqmhuqhp"
+        public static final int TXREF_STRING_MIN_LENGTH = 18;                    // ex: "tx1rqqqqqqqqwtvvjr"
+        public static final int TXREF_STRING_NO_HRP_MIN_LENGTH = 15;             // ex: "rqqqqqqqqwtvvjr"
 
-        public static final int TXREF_EXT_STRING_MIN_LENGTH = 21;                // ex: "tx1yqqqqqqqqqqqksvh26"
-        public static final int TXREF_EXT_STRING_NO_HRP_MIN_LENGTH = 18;         // ex: "yqqqqqqqqqqqksvh26"
+        public static final int TXREF_EXT_STRING_MIN_LENGTH = 21;                // ex: "tx1y29umqjxppqqsfp2tt"
+        public static final int TXREF_EXT_STRING_NO_HRP_MIN_LENGTH = 18;         // ex: "y29umqjxppqqsfp2tt"
 
-        public static final int TXREF_STRING_MIN_LENGTH_TESTNET = 22;            // ex: "txtest1rqqqqqqqqmhuqhp"
+        public static final int TXREF_STRING_MIN_LENGTH_TESTNET = 22;            // ex: "txtest1xqqqqqqqqrrdksa"
 
-        public static final int TXREF_EXT_STRING_MIN_LENGTH_TESTNET = 25;        // ex: "txtest18jk0uqayzu4xaw4hzl"
+        public static final int TXREF_EXT_STRING_MIN_LENGTH_TESTNET = 25;        // ex: "txtest1829umqjxppqq73wpgv"
 
         public static final int MAX_BLOCK_HEIGHT         = 0xFFFFFF; // 16777215
 
@@ -326,6 +326,7 @@ public class Txref {
 
         static DecodedResult txrefDecode(String txref) {
             String txrefClean = Bech32.stripUnknownChars(txref);
+            txrefClean = txrefClean.toLowerCase();
             txrefClean = Impl.addHrpIfNeeded(txrefClean);
             design.contract.bech32.DecodedResult bech32DecodedResult = Bech32.decode(txrefClean);
 

@@ -182,17 +182,17 @@ public class TxrefTest {
     @Test
     public void prettyPrint_mainnet() {
         String hrp = Txref.BECH32_HRP_MAIN;
-        String plain = "tx1rqqqqqqqqmhuqhp";
+        String plain = "tx1rqqqqqqqqwtvvjr";
         String pretty = Txref.Impl.prettyPrint(plain, hrp.length());
-        assertEquals("tx1:rqqq-qqqq-qmhu-qhp", pretty);
+        assertEquals("tx1:rqqq-qqqq-qwtv-vjr", pretty);
     }
 
     @Test
     public void prettyPrint_testnet() {
         String hrp = Txref.BECH32_HRP_TEST;
-        String plain = "txtest1xjk0uqayzat0dz8";
+        String plain = "txtest1xjk0uqayzghlp89";
         String pretty = Txref.Impl.prettyPrint(plain, hrp.length());
-        assertEquals("txtest1:xjk0-uqay-zat0-dz8", pretty);
+        assertEquals("txtest1:xjk0-uqay-zghl-p89", pretty);
     }
 
     @Test(expected = NullPointerException.class)
@@ -785,11 +785,15 @@ public class TxrefTest {
         assertEquals("tx1:rqqq-qqqq-qwtv-vjr",
                 Txref.Impl.txrefEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN, 0, 0));
 
-        // Transaction #2205 of Block #466793:
-        assertEquals("tx1:rjk0-uqay-z9l7-m9m",
-                Txref.Impl.txrefEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN, 466793, 2205));
+        // Transaction #1 of Block #170:
+        assertEquals("tx1:r52q-qqpq-qpty-cfg",
+                Txref.Impl.txrefEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN, 170, 1));
 
-        // The following list gives properly encoded Bitcoin mainnet TxRef's
+        // Transaction #1234 of Block #456789, with outpoint 1:
+        assertEquals("tx1:y29u-mqjx-ppqq-sfp2-tt",
+                Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN_EXTENDED, 456789, 1234, 1));
+
+        // The following list gives properly encoded mainnet TxRef's
         assertEquals("tx1:rqqq-qqqq-qwtv-vjr",
                 Txref.Impl.txrefEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN, 0, 0));
         assertEquals("tx1:rqqq-qqll-lj68-7n2",
@@ -799,7 +803,7 @@ public class TxrefTest {
         assertEquals("tx1:r7ll-llll-lp6m-78v",
                 Txref.Impl.txrefEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN, 0xFFFFFF, 0x7FFF));
 
-        // The following list gives properly encoded Bitcoin testnet TxRef's
+        // The following list gives properly encoded testnet TxRef's
         assertEquals("txtest1:xqqq-qqqq-qrrd-ksa",
                 Txref.Impl.txrefEncode(Txref.BECH32_HRP_TEST, Txref.MAGIC_BTC_TEST, 0, 0));
         assertEquals("txtest1:xqqq-qqll-lljx-y35",
@@ -809,11 +813,11 @@ public class TxrefTest {
         assertEquals("txtest1:x7ll-llll-lvj6-y9j",
                 Txref.Impl.txrefEncode(Txref.BECH32_HRP_TEST, Txref.MAGIC_BTC_TEST, 0xFFFFFF, 0x7FFF));
 
-        // The following list gives valid (though strangely formatted) Bitcoin TxRef's
-        assertEquals("tx1:rjk0-uqay-z9l7-m9m",
-                Txref.Impl.txrefEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN, 0x71F69, 0x89D));
+        // The following list gives valid (sometimes strangely formatted) TxRef's
+        assertEquals("tx1:r29u-mqjx-putt-3p0",
+                Txref.Impl.txrefEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN, 456789, 1234));
 
-        // The following list gives properly encoded Bitcoin mainnet TxRef's with Outpoints
+        // The following list gives properly encoded mainnet TxRef's with Outpoints
         assertEquals("tx1:yqqq-qqqq-qqqq-rvum-0c",
                 Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN_EXTENDED, 0, 0, 0));
         assertEquals("tx1:yqqq-qqll-lqqq-en8x-05",
@@ -832,12 +836,10 @@ public class TxrefTest {
         assertEquals("tx1:y7ll-llll-lpqq-s4qz-hw",
                 Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN_EXTENDED, 0xFFFFFF, 0x7FFF, 1));
 
-        assertEquals("tx1:yjk0-uqay-zrfq-akgy-w9",
-                Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN_EXTENDED, 0x71F69, 0x89D, 0x123));
-        assertEquals("tx1:yjk0-uqay-zu4x-x22s-y6",
-                Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN_EXTENDED, 0x71F69, 0x89D, 0x1ABC));
+        assertEquals("tx1:y29u-mqjx-ppqq-sfp2-tt",
+                Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, Txref.MAGIC_BTC_MAIN_EXTENDED, 456789, 1234, 1));
 
-        // The following list gives properly encoded Bitcoin testnet TxRef's with Outpoints
+        // The following list gives properly encoded testnet TxRef's with Outpoints
         assertEquals("txtest1:8qqq-qqqq-qqqq-d5ns-vl",
                 Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, Txref.MAGIC_BTC_TEST_EXTENDED, 0, 0, 0));
         assertEquals("txtest1:8qqq-qqll-lqqq-htgd-vn",
@@ -856,10 +858,8 @@ public class TxrefTest {
         assertEquals("txtest1:87ll-llll-lpqq-7d0f-5f",
                 Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, Txref.MAGIC_BTC_TEST_EXTENDED, 0xFFFFFF, 0x7FFF, 1));
 
-        assertEquals("txtest1:8jk0-uqay-zrfq-nw80-dz",
-                Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, Txref.MAGIC_BTC_TEST_EXTENDED, 0x71F69, 0x89D, 0x123));
-        assertEquals("txtest1:8jk0-uqay-zu4x-gj9m-8a",
-                Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, Txref.MAGIC_BTC_TEST_EXTENDED, 0x71F69, 0x89D, 0x1ABC));
+        assertEquals("txtest1:829u-mqjx-ppqq-73wp-gv",
+                Txref.Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, Txref.MAGIC_BTC_TEST_EXTENDED, 456789, 1234, 1));
     }
 
     @Test
@@ -874,16 +874,22 @@ public class TxrefTest {
         assertEquals(0, decodedResult.getTransactionPosition());
         assertEquals(0, decodedResult.getTxoIndex());
 
-
-        // Transaction #2205 of Block #466793:
-        decodedResult = Txref.Impl.txrefDecode("tx1:rjk0-uqay-z9l7-m9m");
+        // Transaction #1 of Block #170:
+        decodedResult = Txref.Impl.txrefDecode("tx1:r52q‑qqpq‑qpty‑cfg");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
-        assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(170, decodedResult.getBlockHeight());
+        assertEquals(1, decodedResult.getTransactionPosition());
         assertEquals(0, decodedResult.getTxoIndex());
 
+        // Transaction #1234 of Block #456789, with outpoint 1:
+        decodedResult = Txref.Impl.txrefDecode("tx1:y29u‑mqjx‑ppqq‑sfp2‑tt");
+        assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
+        assertEquals(456789, decodedResult.getBlockHeight());
+        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1, decodedResult.getTxoIndex());
 
-        // The following list gives properly encoded Bitcoin mainnet TxRef's
+
+        // The following list gives properly encoded mainnet TxRef's
         decodedResult = Txref.Impl.txrefDecode("tx1:rqqq-qqqq-qwtv-vjr");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
@@ -909,7 +915,7 @@ public class TxrefTest {
         assertEquals(0, decodedResult.getTxoIndex());
 
 
-        // The following list gives properly encoded Bitcoin testnet TxRef's
+        // The following list gives properly encoded testnet TxRef's
         decodedResult = Txref.Impl.txrefDecode("txtest1:xqqq-qqqq-qrrd-ksa");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
@@ -935,15 +941,39 @@ public class TxrefTest {
         assertEquals(0, decodedResult.getTxoIndex());
 
 
-        // The following list gives valid (though strangely formatted) Bitcoin TxRef's
-        decodedResult = Txref.Impl.txrefDecode("tx1:rjk0-uqay-z9l7-m9m");
+        // The following list gives valid (sometimes strangely formatted) TxRef's
+        decodedResult = Txref.Impl.txrefDecode("tx1:r29u-mqjx-putt-3p0");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
-        assertEquals(0x71F69, decodedResult.getBlockHeight());
-        assertEquals(0x89D, decodedResult.getTransactionPosition());
+        assertEquals(456789, decodedResult.getBlockHeight());
+        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTxoIndex());
+
+        decodedResult = Txref.Impl.txrefDecode("TX1R29UMQJXPUTT3P0");
+        assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
+        assertEquals(456789, decodedResult.getBlockHeight());
+        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTxoIndex());
+
+        decodedResult = Txref.Impl.txrefDecode("TX1R29umqJX--PUTT----3P0");
+        assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
+        assertEquals(456789, decodedResult.getBlockHeight());
+        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTxoIndex());
+
+        decodedResult = Txref.Impl.txrefDecode("tx1 r29u mqjx putt 3p0");
+        assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
+        assertEquals(456789, decodedResult.getBlockHeight());
+        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTxoIndex());
+
+        decodedResult = Txref.Impl.txrefDecode("tx1!r29u/mqj*x-putt^^3p0");
+        assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
+        assertEquals(456789, decodedResult.getBlockHeight());
+        assertEquals(1234, decodedResult.getTransactionPosition());
         assertEquals(0, decodedResult.getTxoIndex());
 
 
-        // The following list gives properly encoded Bitcoin mainnet TxRef's with Outpoints
+        // The following list gives properly encoded mainnet TxRef's with Outpoints
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqqq-qqqq-rvum-0c");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
@@ -994,20 +1024,14 @@ public class TxrefTest {
         assertEquals(1, decodedResult.getTxoIndex());
 
 
-        decodedResult = Txref.Impl.txrefDecode("tx1:yjk0-uqay-zrfq-akgy-w9");
+        decodedResult = Txref.Impl.txrefDecode("tx1:y29u-mqjx-ppqq-sfp2-tt");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
-        assertEquals(0x71F69, decodedResult.getBlockHeight());
-        assertEquals(0x89D, decodedResult.getTransactionPosition());
-        assertEquals(0x123, decodedResult.getTxoIndex());
-
-        decodedResult = Txref.Impl.txrefDecode("tx1:yjk0-uqay-zu4x-x22s-y6");
-        assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
-        assertEquals(0x71F69, decodedResult.getBlockHeight());
-        assertEquals(0x89D, decodedResult.getTransactionPosition());
-        assertEquals(0x1ABC, decodedResult.getTxoIndex());
+        assertEquals(456789, decodedResult.getBlockHeight());
+        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1, decodedResult.getTxoIndex());
 
 
-        // The following list gives properly encoded Bitcoin testnet TxRef's with Outpoints
+        // The following list gives properly encoded testnet TxRef's with Outpoints
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqqq-qqqq-d5ns-vl");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
@@ -1058,17 +1082,11 @@ public class TxrefTest {
         assertEquals(1, decodedResult.getTxoIndex());
 
 
-        decodedResult = Txref.Impl.txrefDecode("txtest1:8jk0-uqay-zrfq-nw80-dz");
+        decodedResult = Txref.Impl.txrefDecode("txtest1:829u-mqjx-ppqq-73wp-gv");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
-        assertEquals(0x71F69, decodedResult.getBlockHeight());
-        assertEquals(0x89D, decodedResult.getTransactionPosition());
-        assertEquals(0x123, decodedResult.getTxoIndex());
-
-        decodedResult = Txref.Impl.txrefDecode("txtest1:8jk0-uqay-zu4x-gj9m-8a");
-        assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
-        assertEquals(0x71F69, decodedResult.getBlockHeight());
-        assertEquals(0x89D, decodedResult.getTransactionPosition());
-        assertEquals(0x1ABC, decodedResult.getTxoIndex());
+        assertEquals(456789, decodedResult.getBlockHeight());
+        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1, decodedResult.getTxoIndex());
     }
 
     @Test

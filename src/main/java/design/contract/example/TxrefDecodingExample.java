@@ -6,26 +6,26 @@ import design.contract.txref.Txref;
 public class TxrefDecodingExample {
 
     /**
-     * Decode a simple txref for a testnet transaction
+     * Decode a simple txref for a mainnet transaction
      */
     private static void decodeStandardTxref() {
-        DecodedResult decodedResult = Txref.decode("txtest1:xjk0-uqay-zghl-p89");
+        DecodedResult decodedResult = Txref.decode("tx1:r52q-qqpq-qpty-cfg");
 
-        assert(decodedResult.getBlockHeight() == 466793);
-        assert(decodedResult.getTransactionPosition() == 2205);
+        assert(decodedResult.getBlockHeight() == 170);
+        assert(decodedResult.getTransactionPosition() == 1);
         assert(decodedResult.getTxoIndex() == 0);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32M);
     }
 
     /**
-     * Decode an extended txref for a testnet transaction
+     * Decode an extended txref for a mainnet transaction
      */
     private static void decodeExtendedTxref() {
-        DecodedResult decodedResult = Txref.decode("txtest1:8jk0-uqay-zrqq-ldt6-va");
+        DecodedResult decodedResult = Txref.decode("tx1:y52q-qqpq-qpqq-4lkz-zc");
 
-        assert(decodedResult.getBlockHeight() == 466793);
-        assert(decodedResult.getTransactionPosition() == 2205);
-        assert(decodedResult.getTxoIndex() == 3);
+        assert(decodedResult.getBlockHeight() == 170);
+        assert(decodedResult.getTransactionPosition() == 1);
+        assert(decodedResult.getTxoIndex() == 1);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32M);
     }
 
@@ -35,14 +35,14 @@ public class TxrefDecodingExample {
      * that contains an explanatory message along with the txref that should be used instead.
      */
     private static void decodeStandardTxrefUsingOriginalConstant() {
-        DecodedResult decodedResult = Txref.decode("txtest1:xjk0-uqay-zat0-dz8");
+        DecodedResult decodedResult = Txref.decode("tx1:r52q-qqpq-q5h5-5v2");
 
-        assert(decodedResult.getBlockHeight() == 466793);
-        assert(decodedResult.getTransactionPosition() == 2205);
+        assert(decodedResult.getBlockHeight() == 170);
+        assert(decodedResult.getTransactionPosition() == 1);
         assert(decodedResult.getTxoIndex() == 0);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32);
 
-        assert(decodedResult.getCommentary().contains("txtest1:xjk0-uqay-zghl-p89"));
+        assert(decodedResult.getCommentary().contains("tx1:r52q-qqpq-qpty-cfg"));
     }
 
     public static void main(String[] args) {

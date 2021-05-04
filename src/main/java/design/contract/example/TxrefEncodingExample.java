@@ -8,26 +8,26 @@ public class TxrefEncodingExample {
      * Create a txref for a mainnet transaction, with only a blockHeight and transactionPosition
      */
     private static void createStandardMainnetTxref() {
-        int blockHeight = 466793;
-        int transactionPosition = 2205;
+        int blockHeight = 170;
+        int transactionPosition = 1;
 
         String txref = Txref.encode(blockHeight, transactionPosition);
 
         System.out.println(txref);
-        // prints "tx1:rjk0-uqay-z9l7-m9m"
+        // prints "tx1:r52q-qqpq-qpty-cfg"
     }
 
     /**
      * Create a txref for a testnet transaction, with only a blockHeight and transactionPosition
      */
     private static void createStandardTestnetTxref() {
-        int blockHeight = 466793;
-        int transactionPosition = 2205;
+        int blockHeight = 170;
+        int transactionPosition = 1;
 
         String txref = Txref.encodeTestnet(blockHeight, transactionPosition);
 
         System.out.println(txref);
-        // prints "txtest1:xjk0-uqay-zghl-p89"
+        // prints "txtest1:x52q-qqpq-qvr9-ztk"
     }
 
     /**
@@ -35,14 +35,14 @@ public class TxrefEncodingExample {
      * transactionPosition and a specific txoIndex of 3
      */
     private static void createExtendedMainnetTxref() {
-        int blockHeight = 466793;
-        int transactionPosition = 2205;
-        int txoIndex = 3;
+        int blockHeight = 170;
+        int transactionPosition = 1;
+        int txoIndex = 1;
 
         String txref = Txref.encode(blockHeight, transactionPosition, txoIndex);
 
         System.out.println(txref);
-        // prints "tx1:yjk0-uqay-zrqq-34y3-06"
+        // prints "tx1:y52q-qqpq-qpqq-4lkz-zc"
     }
 
     /**
@@ -50,14 +50,14 @@ public class TxrefEncodingExample {
      * transactionPosition and a specific txoIndex of 3
      */
     private static void createExtendedTestnetTxref() {
-        int blockHeight = 466793;
-        int transactionPosition = 2205;
-        int txoIndex = 3;
+        int blockHeight = 170;
+        int transactionPosition = 1;
+        int txoIndex = 1;
 
         String txref = Txref.encodeTestnet(blockHeight, transactionPosition, txoIndex);
 
         System.out.println(txref);
-        // prints "txtest1:8jk0-uqay-zrqq-ldt6-va"
+        // prints "txtest1:852q-qqpq-qpqq-m8ef-pl"
     }
 
     public static void main(String[] args) {

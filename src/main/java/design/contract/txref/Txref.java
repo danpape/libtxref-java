@@ -242,6 +242,28 @@ public class Txref {
             return txref;
         }
 
+        // returns true if cleaned txref contains upper-case characters. "cleaned" means that the
+        // txref has already been processed by bech32::stripUnknownChars() and only contains alpha-numeric
+        // characters from the valid bech32 charset.
+        static boolean cleanTxrefContainsUppercaseCharacters(final String txref) {
+            return !txref.equals(txref.toLowerCase());
+        }
+
+        // returns true if cleaned txref contains lower-case characters. "cleaned" means that the
+        // txref has already been processed by bech32::stripUnknownChars() and only contains alpha-numeric
+        // characters from the valid bech32 charset.
+        static boolean cleanTxrefContainsLowercaseCharacters(final String txref) {
+            return !txref.equals(txref.toUpperCase());
+        }
+
+        // returns true if cleaned txref contains mixed-case characters. "cleaned" means that the
+        // txref has already been processed by bech32::stripUnknownChars() and only contains alpha-numeric
+        // characters from the valid bech32 charset.
+        static boolean cleanTxrefContainsMixedcaseCharacters(final String txref) {
+            return cleanTxrefContainsLowercaseCharacters(txref) &&
+                    cleanTxrefContainsUppercaseCharacters(txref);
+        }
+
         static String txrefEncode(
             final String hrp,
             int magicCode,
@@ -325,8 +347,14 @@ public class Txref {
         }
 
         static DecodedResult txrefDecode(String txref) {
+            String runningCommentary = "";
             String txrefClean = Bech32.stripUnknownChars(txref);
-            txrefClean = txrefClean.toLowerCase();
+            if(cleanTxrefContainsMixedcaseCharacters(txrefClean)) {
+                txrefClean = txrefClean.toLowerCase();
+                runningCommentary += txref + " contains mixed-case characters, which is " +
+                "forbidden by the Bech32 spec. Please use ";
+                runningCommentary += txref.toLowerCase() + " instead. ";
+            }
             txrefClean = Impl.addHrpIfNeeded(txrefClean);
             design.contract.bech32.DecodedResult bech32DecodedResult = Bech32.decode(txrefClean);
 
@@ -359,11 +387,13 @@ public class Txref {
                 else {
                     updatedTxref = txrefEncode(result.getHrp(), result.getMagicCode(), result.getBlockHeight(), result.getTransactionPosition());
                 }
-                result.setCommentary("The txref " + result.getTxref() +
+                runningCommentary += "The txref " + result.getTxref() +
                         " uses an old encoding scheme and should be updated to " + updatedTxref +
-                        " See https://github.com/dcdpr/libtxref-java#regarding-bech32-checksums for more information.");
+                        " See https://github.com/dcdpr/libtxref-java#regarding-bech32-checksums for more information.";
             }
-
+            if(!runningCommentary.isEmpty()) {
+                result.setCommentary(runningCommentary);
+            }
             return result;
         }
 

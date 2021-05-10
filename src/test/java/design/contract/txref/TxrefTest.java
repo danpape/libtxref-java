@@ -1102,7 +1102,7 @@ public class TxrefTest {
     }
 
     @Test
-    public void txrefDecode_checkCommentary() {
+    public void txrefDecode_checkCommentary_oldEncoding() {
 
         DecodedResult decodedResult;
 
@@ -1114,6 +1114,43 @@ public class TxrefTest {
         assertEquals(DecodedResult.Encoding.BECH32, decodedResult.getEncoding());
         assertNotEquals("", decodedResult.getCommentary());
         assertTrue(decodedResult.getCommentary().contains("txtest1:8jk0-uqay-zu4x-gj9m-8a"));
+    }
+
+    @Test
+    public void txrefDecode_checkCommentary_mixedCase() {
+
+        DecodedResult decodedResult;
+
+        decodedResult = Txref.Impl.txrefDecode("txtest1:8jk0-uQay-zu4x-gj9m-8a");
+        assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
+        assertNotEquals("", decodedResult.getCommentary());
+        assertTrue(decodedResult.getCommentary().contains("txtest1:8jk0-uqay-zu4x-gj9m-8a"));
+    }
+
+    @Test
+    public void containsUppercaseCharacters() {
+        assertFalse(Txref.Impl.cleanTxrefContainsUppercaseCharacters("test"));
+        assertTrue(Txref.Impl.cleanTxrefContainsUppercaseCharacters("TEST"));
+        assertTrue(Txref.Impl.cleanTxrefContainsUppercaseCharacters("Test"));
+        assertFalse(Txref.Impl.cleanTxrefContainsUppercaseCharacters("123abc"));
+    }
+
+    @Test
+    public void containsLowercaseCharacters() {
+        assertTrue(Txref.Impl.cleanTxrefContainsLowercaseCharacters("test"));
+        assertFalse(Txref.Impl.cleanTxrefContainsLowercaseCharacters("TEST"));
+        assertTrue(Txref.Impl.cleanTxrefContainsLowercaseCharacters("Test"));
+        assertFalse(Txref.Impl.cleanTxrefContainsLowercaseCharacters("123ABC"));
+    }
+
+    @Test
+    public void containsMixedcaseCharacters() {
+        assertFalse(Txref.Impl.cleanTxrefContainsMixedcaseCharacters("test"));
+        assertFalse(Txref.Impl.cleanTxrefContainsMixedcaseCharacters("TEST"));
+        assertTrue(Txref.Impl.cleanTxrefContainsMixedcaseCharacters("Test"));
+        assertFalse(Txref.Impl.cleanTxrefContainsMixedcaseCharacters("123"));
+        assertFalse(Txref.Impl.cleanTxrefContainsMixedcaseCharacters("123a"));
+        assertTrue(Txref.Impl.cleanTxrefContainsMixedcaseCharacters("A123a"));
     }
 
 }

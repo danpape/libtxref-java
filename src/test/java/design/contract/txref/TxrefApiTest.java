@@ -32,6 +32,18 @@ public class TxrefApiTest {
                 Txref.encodeTestnet( 466793, 2205, 0, false, Txref.BECH32_HRP_TEST));
     }
 
+    @Test
+    public void encode_regtest() {
+        assertEquals("txrt1:q7ll-llll-lps4-p3p",
+                Txref.encodeRegtest( 0xFFFFFF, 0x7FFF));
+        assertEquals("txrt1:q7ll-llll-lps4-p3p",
+                Txref.encodeRegtest( 0xFFFFFF, 0x7FFF, 0));
+        assertEquals("txrt1:q7ll-llll-lps4-p3p",
+                Txref.encodeRegtest( 0xFFFFFF, 0x7FFF, 0, false));
+        assertEquals("txrt1:q7ll-llll-lps4-p3p",
+                Txref.encodeRegtest( 0xFFFFFF, 0x7FFF, 0, false, Txref.BECH32_HRP_REGTEST));
+    }
+
 
     @Test
     public void encode_extended_mainnet() {
@@ -51,6 +63,16 @@ public class TxrefApiTest {
                 Txref.encodeTestnet( 466793, 2205, 0x1ABC, false));
         assertEquals("txtest1:8jk0-uqay-zu4x-gj9m-8a",
                 Txref.encodeTestnet( 466793, 2205, 0x1ABC, false, Txref.BECH32_HRP_TEST));
+    }
+
+    @Test
+    public void encode_extended_regtest() {
+        assertEquals("txrt1:p7ll-llll-lpqq-qa0d-vp",
+                Txref.encodeRegtest( 0xFFFFFF, 0x7FFF, 1));
+        assertEquals("txrt1:p7ll-llll-lpqq-qa0d-vp",
+                Txref.encodeRegtest( 0xFFFFFF, 0x7FFF, 1, false));
+        assertEquals("txrt1:p7ll-llll-lpqq-qa0d-vp",
+                Txref.encodeRegtest( 0xFFFFFF, 0x7FFF, 1, false, Txref.BECH32_HRP_REGTEST));
     }
 
     @Test
@@ -78,6 +100,18 @@ public class TxrefApiTest {
     }
 
     @Test
+    public void decode_regtest() {
+        DecodedResult decodedResult = Txref.decode("txrt1:q7ll-llll-lps4-p3p");
+        assertEquals(Txref.BECH32_HRP_REGTEST, decodedResult.getHrp());
+        assertEquals(Txref.MAGIC_BTC_REGTEST, decodedResult.getMagicCode());
+        assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
+        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTxoIndex());
+        assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
+        assertEquals("", decodedResult.getCommentary());
+    }
+
+    @Test
     public void decode_extended_mainnet() {
         DecodedResult decodedResult = Txref.decode("tx1:yjk0-uqay-zu4x-x22s-y6");
         assertEquals(Txref.BECH32_HRP_MAIN, decodedResult.getHrp());
@@ -97,6 +131,18 @@ public class TxrefApiTest {
         assertEquals(466793, decodedResult.getBlockHeight());
         assertEquals(2205, decodedResult.getTransactionPosition());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
+        assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
+        assertEquals("", decodedResult.getCommentary());
+    }
+
+    @Test
+    public void decode_extended_regtest() {
+        DecodedResult decodedResult = Txref.decode("txrt1:p7ll-llll-lpqq-qa0d-vp");
+        assertEquals(Txref.BECH32_HRP_REGTEST, decodedResult.getHrp());
+        assertEquals(Txref.MAGIC_BTC_REGTEST_EXTENDED, decodedResult.getMagicCode());
+        assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
+        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(1, decodedResult.getTxoIndex());
         assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
         assertEquals("", decodedResult.getCommentary());
     }
@@ -173,6 +219,9 @@ public class TxrefApiTest {
         // testnet
         assertEquals(Txref.InputParam.TXREF, Txref.classifyInputString("txtest1xjk0uqayzghlp89"));
         assertEquals(Txref.InputParam.TXREF, Txref.classifyInputString("xjk0uqayzghlp89"));
+        // regtest
+        assertEquals(Txref.InputParam.TXREF, Txref.classifyInputString("txrt1q7lllllllps4p3p"));
+        assertEquals(Txref.InputParam.TXREF, Txref.classifyInputString("q7lllllllps4p3p"));
     }
 
     @Test
@@ -183,6 +232,9 @@ public class TxrefApiTest {
         // testnet
         assertEquals(Txref.InputParam.TXREFEXT, Txref.classifyInputString("txtest18jk0uqayzu4xgj9m8a"));
         assertEquals(Txref.InputParam.TXREFEXT, Txref.classifyInputString("8jk0uqayzu4xgj9m8a"));
+        // regtest
+        assertEquals(Txref.InputParam.TXREFEXT, Txref.classifyInputString("txrt1p7lllllllpqqqa0dvp"));
+        assertEquals(Txref.InputParam.TXREFEXT, Txref.classifyInputString("p7lllllllpqqqa0dvp"));
     }
 
 }

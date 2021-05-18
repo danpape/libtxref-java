@@ -17,6 +17,10 @@ public class Txref {
 
         public static final int TXREF_EXT_STRING_MIN_LENGTH_TESTNET = 25;        // ex: "txtest1829umqjxppqq73wpgv"
 
+        public static final int TXREF_STRING_MIN_LENGTH_REGTEST = 20;            // ex: "txrt1q7lllllllps4p3p"
+
+        public static final int TXREF_EXT_STRING_MIN_LENGTH_REGTEST = 23;        // ex: "txrt1p7lllllllpqqqa0dvp"
+
         public static final int MAX_BLOCK_HEIGHT         = 0xFFFFFF; // 16777215
 
         public static final int MAX_TRANSACTION_POSITION = 0x7FFF;   // 32767
@@ -37,12 +41,15 @@ public class Txref {
     // bech32 "human readable part"s
     static final String BECH32_HRP_MAIN = "tx";
     static final String BECH32_HRP_TEST = "txtest";
+    static final String BECH32_HRP_REGTEST = "txrt";
 
     // magic codes used for chain identification and namespacing
     static final char MAGIC_BTC_MAIN = 0x3;
     static final char MAGIC_BTC_MAIN_EXTENDED = 0x4;
     static final char MAGIC_BTC_TEST = 0x6;
     static final char MAGIC_BTC_TEST_EXTENDED = 0x7;
+    static final char MAGIC_BTC_REGTEST = 0x0;
+    static final char MAGIC_BTC_REGTEST_EXTENDED = 0x1;
 
     // characters used when pretty-printing
     static final char COLON = ':';
@@ -98,7 +105,9 @@ public class Txref {
 
         // check that the magic code is for one of the extended txrefs
         static void checkExtendedMagicCode(int magicCode) {
-            if(magicCode != MAGIC_BTC_MAIN_EXTENDED && magicCode != MAGIC_BTC_TEST_EXTENDED)
+            if(magicCode != MAGIC_BTC_MAIN_EXTENDED &&
+                    magicCode != MAGIC_BTC_TEST_EXTENDED &&
+                    magicCode != MAGIC_BTC_REGTEST_EXTENDED)
                 throw new IllegalArgumentException("magic code does not support extended txrefs");
         }
 
@@ -238,6 +247,9 @@ public class Txref {
             }
             if(isLengthValid(txref.length()) && (txref.charAt(0) == 'x' || txref.charAt(0) == '8')) {
                 return Txref.BECH32_HRP_TEST + Bech32.SEPARATOR + txref;
+            }
+            if(isLengthValid(txref.length()) && (txref.charAt(0) == 'q' || txref.charAt(0) == 'p')) {
+                return Txref.BECH32_HRP_REGTEST + Bech32.SEPARATOR + txref;
             }
             return txref;
         }
@@ -381,7 +393,7 @@ public class Txref {
             else if(bech32DecodedResult.getEncoding() == design.contract.bech32.DecodedResult.Encoding.BECH32) {
                 result.setEncoding(DecodedResult.Encoding.BECH32);
                 String updatedTxref;
-                if(result.getMagicCode() == MAGIC_BTC_MAIN_EXTENDED || result.getMagicCode() == MAGIC_BTC_TEST_EXTENDED) {
+                if(result.getMagicCode() == MAGIC_BTC_MAIN_EXTENDED || result.getMagicCode() == MAGIC_BTC_TEST_EXTENDED || result.getMagicCode() == MAGIC_BTC_REGTEST_EXTENDED) {
                     updatedTxref = txrefExtEncode(result.getHrp(), result.getMagicCode(), result.getBlockHeight(), result.getTransactionPosition(), result.getTxoIndex());
                 }
                 else {
@@ -403,10 +415,14 @@ public class Txref {
             // characters, ex: dashes, periods
             String s = Bech32.stripUnknownChars(str);
 
-            if(s.length() == Limits.TXREF_STRING_MIN_LENGTH || s.length() == Limits.TXREF_STRING_MIN_LENGTH_TESTNET )
+            if(s.length() == Limits.TXREF_STRING_MIN_LENGTH ||
+                    s.length() == Limits.TXREF_STRING_MIN_LENGTH_TESTNET ||
+                    s.length() == Limits.TXREF_STRING_MIN_LENGTH_REGTEST)
                 return InputParam.TXREF;
 
-            if(s.length() == Limits.TXREF_EXT_STRING_MIN_LENGTH || s.length() == Limits.TXREF_EXT_STRING_MIN_LENGTH_TESTNET)
+            if(s.length() == Limits.TXREF_EXT_STRING_MIN_LENGTH ||
+                    s.length() == Limits.TXREF_EXT_STRING_MIN_LENGTH_TESTNET ||
+                    s.length() == Limits.TXREF_EXT_STRING_MIN_LENGTH_REGTEST)
                 return InputParam.TXREFEXT;
 
             return InputParam.UNKNOWN;
@@ -534,6 +550,58 @@ public class Txref {
             int transactionPosition) {
 
         return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+    }
+
+    // encodes the position of a confirmed bitcoin transaction on the
+    // regtest network and returns a bech32 encoded "transaction
+    // position reference" (txref). If txoIndex is greater than 0, then
+    // an extended reference is returned (txref-ext). If txoIndex is zero,
+    // but forceExtended=true, then an extended reference is returned
+    // (txref-ext).
+    public static String encodeRegtest(
+            int blockHeight,
+            int transactionPosition,
+            int txoIndex,
+            boolean forceExtended,
+            String hrp) {
+
+        if(txoIndex == 0 && !forceExtended)
+            return Impl.txrefEncode(hrp, MAGIC_BTC_REGTEST, blockHeight, transactionPosition);
+
+        return Impl.txrefExtEncode(hrp, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+
+    }
+
+    public static String encodeRegtest(
+            int blockHeight,
+            int transactionPosition,
+            int txoIndex,
+            boolean forceExtended) {
+
+        if(txoIndex == 0 && !forceExtended)
+            return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionPosition);
+
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+
+    }
+
+    public static String encodeRegtest(
+            int blockHeight,
+            int transactionPosition,
+            int txoIndex) {
+
+        if(txoIndex == 0)
+            return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionPosition);
+
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+
+    }
+
+    public static String encodeRegtest(
+            int blockHeight,
+            int transactionPosition) {
+
+        return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionPosition);
     }
 
     // decodes a bech32 encoded "transaction position reference" (txref) and

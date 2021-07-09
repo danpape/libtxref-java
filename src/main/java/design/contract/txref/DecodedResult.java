@@ -7,17 +7,17 @@ public class DecodedResult {
     private String hrp;
     private String txref;
     private int blockHeight;
-    private int transactionPosition;
+    private int transactionIndex;
     private int txoIndex;
     private int magicCode;
     private Encoding encoding;
     private String commentary;
 
-    public DecodedResult(String hrp, String txref, int blockHeight, int transactionPosition, int txoIndex, int magicCode) {
+    public DecodedResult(String hrp, String txref, int blockHeight, int transactionIndex, int txoIndex, int magicCode) {
         this.hrp = hrp;
         this.txref = txref;
         this.blockHeight = blockHeight;
-        this.transactionPosition = transactionPosition;
+        this.transactionIndex = transactionIndex;
         this.txoIndex = txoIndex;
         this.magicCode = magicCode;
         this.encoding = Encoding.INVALID;
@@ -48,12 +48,12 @@ public class DecodedResult {
         this.blockHeight = blockHeight;
     }
 
-    public int getTransactionPosition() {
-        return transactionPosition;
+    public int getTransactionIndex() {
+        return transactionIndex;
     }
 
-    public void setTransactionPosition(int transactionPosition) {
-        this.transactionPosition = transactionPosition;
+    public void setTransactionIndex(int transactionIndex) {
+        this.transactionIndex = transactionIndex;
     }
 
     public int getTxoIndex() {
@@ -96,7 +96,7 @@ public class DecodedResult {
             return false;
         DecodedResult that = (DecodedResult) o;
         return blockHeight == that.blockHeight &&
-                transactionPosition == that.transactionPosition &&
+                transactionIndex == that.transactionIndex &&
                 txoIndex == that.txoIndex &&
                 magicCode == that.magicCode &&
                 Objects.equals(hrp, that.hrp) &&
@@ -107,7 +107,7 @@ public class DecodedResult {
 
     @Override
     public int hashCode() {
-        return Objects.hash(hrp, txref, blockHeight, transactionPosition, txoIndex, magicCode, encoding, commentary);
+        return Objects.hash(hrp, txref, blockHeight, transactionIndex, txoIndex, magicCode, encoding, commentary);
     }
 
     public enum Encoding {

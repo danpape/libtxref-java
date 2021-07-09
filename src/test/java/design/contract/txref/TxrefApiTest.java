@@ -81,7 +81,7 @@ public class TxrefApiTest {
         assertEquals(Txref.BECH32_HRP_MAIN, decodedResult.getHrp());
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
         assertEquals("", decodedResult.getCommentary());
@@ -93,7 +93,7 @@ public class TxrefApiTest {
         assertEquals(Txref.BECH32_HRP_TEST, decodedResult.getHrp());
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
         assertEquals("", decodedResult.getCommentary());
@@ -105,7 +105,7 @@ public class TxrefApiTest {
         assertEquals(Txref.BECH32_HRP_REGTEST, decodedResult.getHrp());
         assertEquals(Txref.MAGIC_BTC_REGTEST, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
         assertEquals("", decodedResult.getCommentary());
@@ -117,7 +117,7 @@ public class TxrefApiTest {
         assertEquals(Txref.BECH32_HRP_MAIN, decodedResult.getHrp());
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
         assertEquals("", decodedResult.getCommentary());
@@ -129,7 +129,7 @@ public class TxrefApiTest {
         assertEquals(Txref.BECH32_HRP_TEST, decodedResult.getHrp());
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
         assertEquals("", decodedResult.getCommentary());
@@ -141,7 +141,7 @@ public class TxrefApiTest {
         assertEquals(Txref.BECH32_HRP_REGTEST, decodedResult.getHrp());
         assertEquals(Txref.MAGIC_BTC_REGTEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         assertEquals(DecodedResult.Encoding.BECH32M, decodedResult.getEncoding());
         assertEquals("", decodedResult.getCommentary());
@@ -153,7 +153,7 @@ public class TxrefApiTest {
         assertEquals(Txref.BECH32_HRP_TEST, decodedResult.getHrp());
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         assertEquals(DecodedResult.Encoding.BECH32, decodedResult.getEncoding());
         assertNotEquals("", decodedResult.getCommentary());

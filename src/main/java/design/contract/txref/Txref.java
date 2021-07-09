@@ -23,7 +23,7 @@ public class Txref {
 
         public static final int MAX_BLOCK_HEIGHT         = 0xFFFFFF; // 16777215
 
-        public static final int MAX_TRANSACTION_POSITION = 0x7FFF;   // 32767
+        public static final int MAX_TRANSACTION_INDEX    = 0x7FFF;   // 32767
 
         public static final int MAX_TXO_INDEX            = 0x7FFF;   // 32767
 
@@ -85,10 +85,10 @@ public class Txref {
                 throw new IllegalArgumentException("block height is too large");
         }
 
-        // a transaction's position can only be in a certain range
-        static void checkTransactionPositionRange(int transactionPosition) {
-            if(transactionPosition < 0 || transactionPosition > Limits.MAX_TRANSACTION_POSITION)
-                throw new IllegalArgumentException("transaction position is too large");
+        // a transaction's index can only be in a certain range
+        static void checkTransactionIndexRange(int transactionIndex) {
+            if(transactionIndex < 0 || transactionIndex > Limits.MAX_TRANSACTION_INDEX)
+                throw new IllegalArgumentException("transaction index is too large");
         }
 
         // a TXO's index can only be in a certain range
@@ -204,15 +204,15 @@ public class Txref {
             }
         }
 
-        // extract the transaction position from the decoded data part
-        static int extractTransactionPosition(char[] dp) {
+        // extract the transaction index from the decoded data part
+        static int extractTransactionIndex(char[] dp) {
             char version = extractVersion(dp);
 
             if(version == 0) {
-                int transactionPosition = dp[6];
-                transactionPosition |= (dp[7] << 5);
-                transactionPosition |= (dp[8] << 10);
-                return transactionPosition;
+                int transactionIndex = dp[6];
+                transactionIndex |= (dp[7] << 5);
+                transactionIndex |= (dp[8] << 10);
+                return transactionIndex;
             }
             else {
                 throw new IllegalArgumentException("Unknown txref version detected: " + version);
@@ -280,10 +280,10 @@ public class Txref {
             final String hrp,
             int magicCode,
             int blockHeight,
-            int transactionPosition) {
+            int transactionIndex) {
 
             checkBlockHeightRange(blockHeight);
-            checkTransactionPositionRange(transactionPosition);
+            checkTransactionIndexRange(transactionIndex);
             checkMagicCodeRange(magicCode);
 
             char[] dp = new char[Limits.DATA_SIZE];
@@ -301,10 +301,10 @@ public class Txref {
             dp[4] |= (blockHeight & 0x7C000) >> 14;          // sets 5 bits in 5th 5 bits
             dp[5] |= (blockHeight & 0xF80000) >> 19;         // sets 5 bits in 6th 5 bits (24 bits total for blockHeight)
 
-            // set transaction position
-            dp[6] |= (transactionPosition & 0x1F);           // sets 5 bits in 7th 5 bits
-            dp[7] |= (transactionPosition & 0x3E0) >> 5;     // sets 5 bits in 8th 5 bits
-            dp[8] |= (transactionPosition & 0x7C00) >> 10;   // sets 5 bits in 9th 5 bits (15 bits total for transactionPosition)
+            // set transaction index
+            dp[6] |= (transactionIndex & 0x1F);           // sets 5 bits in 7th 5 bits
+            dp[7] |= (transactionIndex & 0x3E0) >> 5;     // sets 5 bits in 8th 5 bits
+            dp[8] |= (transactionIndex & 0x7C00) >> 10;   // sets 5 bits in 9th 5 bits (15 bits total for transactionIndex)
 
             // Bech32 encode
             String result = Bech32.encode(hrp, dp);
@@ -317,11 +317,11 @@ public class Txref {
             final String hrp,
             int magicCode,
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex) {
 
             checkBlockHeightRange(blockHeight);
-            checkTransactionPositionRange(transactionPosition);
+            checkTransactionIndexRange(transactionIndex);
             checkTxoIndexRange(txoIndex);
             checkMagicCodeRange(magicCode);
             checkExtendedMagicCode(magicCode);
@@ -341,10 +341,10 @@ public class Txref {
             dp[4] |= (blockHeight & 0x7C000) >> 14;        // sets 5 bits in 6th 5 bits
             dp[5] |= (blockHeight & 0xF80000) >> 19;       // sets 5 bits in 7th 5 bits (24 bits total for blockHeight)
 
-            // set transaction position
-            dp[6] |= (transactionPosition & 0x1F);         // sets 5 bits in 8th 5 bits
-            dp[7] |= (transactionPosition & 0x3E0) >> 5;   // sets 5 bits in 9th 5 bits
-            dp[8] |= (transactionPosition & 0x7C00) >> 10; // sets 5 bits in 10th 5 bits (15 bits total for transactionPosition)
+            // set transaction index
+            dp[6] |= (transactionIndex & 0x1F);         // sets 5 bits in 8th 5 bits
+            dp[7] |= (transactionIndex & 0x3E0) >> 5;   // sets 5 bits in 9th 5 bits
+            dp[8] |= (transactionIndex & 0x7C00) >> 10; // sets 5 bits in 10th 5 bits (15 bits total for transactionIndex)
 
             // set txo index
             dp[9] |= txoIndex & 0x1F;                      // sets 5 bits in 11th 5 bits
@@ -383,7 +383,7 @@ public class Txref {
                     bech32DecodedResult.getHrp(),
                     Impl.prettyPrint(txrefClean, bech32DecodedResult.getHrp().length()),
                     Impl.extractBlockHeight(bech32DecodedResult.getDp()),
-                    Impl.extractTransactionPosition(bech32DecodedResult.getDp()),
+                    Impl.extractTransactionIndex(bech32DecodedResult.getDp()),
                     Impl.extractTxoIndex(bech32DecodedResult.getDp()),
                     Impl.extractMagicCode(bech32DecodedResult.getDp()));
 
@@ -394,10 +394,10 @@ public class Txref {
                 result.setEncoding(DecodedResult.Encoding.BECH32);
                 String updatedTxref;
                 if(result.getMagicCode() == MAGIC_BTC_MAIN_EXTENDED || result.getMagicCode() == MAGIC_BTC_TEST_EXTENDED || result.getMagicCode() == MAGIC_BTC_REGTEST_EXTENDED) {
-                    updatedTxref = txrefExtEncode(result.getHrp(), result.getMagicCode(), result.getBlockHeight(), result.getTransactionPosition(), result.getTxoIndex());
+                    updatedTxref = txrefExtEncode(result.getHrp(), result.getMagicCode(), result.getBlockHeight(), result.getTransactionIndex(), result.getTxoIndex());
                 }
                 else {
-                    updatedTxref = txrefEncode(result.getHrp(), result.getMagicCode(), result.getBlockHeight(), result.getTransactionPosition());
+                    updatedTxref = txrefEncode(result.getHrp(), result.getMagicCode(), result.getBlockHeight(), result.getTransactionIndex());
                 }
                 runningCommentary += "The txref " + result.getTxref() +
                         " uses an old encoding scheme and should be updated to " + updatedTxref +
@@ -456,48 +456,48 @@ public class Txref {
     // (txref-ext).
     public static String encode(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex,
             boolean forceExtended,
             final String hrp) {
 
         if(txoIndex == 0 && !forceExtended)
-            return Impl.txrefEncode(hrp, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
+            return Impl.txrefEncode(hrp, MAGIC_BTC_MAIN, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(hrp, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(hrp, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encode(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex,
             boolean forceExtended) {
 
         if(txoIndex == 0 && !forceExtended)
-            return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encode(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex) {
 
         if(txoIndex == 0)
-            return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encode(
             int blockHeight,
-            int transactionPosition) {
+            int transactionIndex) {
 
-        return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionPosition);
+        return Impl.txrefEncode(Txref.BECH32_HRP_MAIN, MAGIC_BTC_MAIN, blockHeight, transactionIndex);
     }
 
     // encodes the position of a confirmed bitcoin transaction on the
@@ -508,48 +508,48 @@ public class Txref {
     // (txref-ext).
     public static String encodeTestnet(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex,
             boolean forceExtended,
             String hrp) {
 
         if(txoIndex == 0 && !forceExtended)
-            return Impl.txrefEncode(hrp, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(hrp, MAGIC_BTC_TEST, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(hrp, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(hrp, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encodeTestnet(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex,
             boolean forceExtended) {
 
         if(txoIndex == 0 && !forceExtended)
-            return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encodeTestnet(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex) {
 
         if(txoIndex == 0)
-            return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encodeTestnet(
             int blockHeight,
-            int transactionPosition) {
+            int transactionIndex) {
 
-        return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionPosition);
+        return Impl.txrefEncode(Txref.BECH32_HRP_TEST, MAGIC_BTC_TEST, blockHeight, transactionIndex);
     }
 
     // encodes the position of a confirmed bitcoin transaction on the
@@ -560,48 +560,48 @@ public class Txref {
     // (txref-ext).
     public static String encodeRegtest(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex,
             boolean forceExtended,
             String hrp) {
 
         if(txoIndex == 0 && !forceExtended)
-            return Impl.txrefEncode(hrp, MAGIC_BTC_REGTEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(hrp, MAGIC_BTC_REGTEST, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(hrp, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(hrp, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encodeRegtest(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex,
             boolean forceExtended) {
 
         if(txoIndex == 0 && !forceExtended)
-            return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encodeRegtest(
             int blockHeight,
-            int transactionPosition,
+            int transactionIndex,
             int txoIndex) {
 
         if(txoIndex == 0)
-            return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionPosition);
+            return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionIndex);
 
-        return Impl.txrefExtEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionPosition, txoIndex);
+        return Impl.txrefExtEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST_EXTENDED, blockHeight, transactionIndex, txoIndex);
 
     }
 
     public static String encodeRegtest(
             int blockHeight,
-            int transactionPosition) {
+            int transactionIndex) {
 
-        return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionPosition);
+        return Impl.txrefEncode(Txref.BECH32_HRP_REGTEST, MAGIC_BTC_REGTEST, blockHeight, transactionIndex);
     }
 
     // decodes a bech32 encoded "transaction position reference" (txref) and

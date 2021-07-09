@@ -27,58 +27,58 @@ To use the package, you need the following Maven dependency:
 
 See [the full code for the following examples](https://raw.githubusercontent.com/dcdpr/libtxref-java/master/src/main/java/design/contract/example/TxrefEncodingExample.java).
 
-#### Create a txref for a mainnet transaction, with only a blockHeight and transactionPosition:
+#### Create a txref for a mainnet transaction, with only a blockHeight and transactionIndex:
 
 ```java
 private static void createStandardMainnetTxref() {
     int blockHeight = 466793;
-    int transactionPosition = 2205;
+    int transactionIndex = 2205;
 
-    String txref = Txref.encode(blockHeight, transactionPosition);
+    String txref = Txref.encode(blockHeight, transactionIndex);
 
     System.out.println(txref);
     // prints "tx1:rjk0-uqay-z9l7-m9m"
 }
 ```
 
-#### Create a txref for a testnet transaction, with only a blockHeight and transactionPosition:
+#### Create a txref for a testnet transaction, with only a blockHeight and transactionIndex:
 
 ```java
 private static void createStandardTestnetTxref() {
     int blockHeight = 466793;
-    int transactionPosition = 2205;
+    int transactionIndex = 2205;
 
-    String txref = Txref.encodeTestnet(blockHeight, transactionPosition);
+    String txref = Txref.encodeTestnet(blockHeight, transactionIndex);
 
     System.out.println(txref);
     // prints "txtest1:xjk0-uqay-zghl-p89"
 }
 ```
 
-#### Create an extended txref for a mainnet transaction, with a blockHeight and transactionPosition and a specific txoIndex:
+#### Create an extended txref for a mainnet transaction, with a blockHeight and transactionIndex and a specific txoIndex:
 
 ```java
 private static void createExtendedMainnetTxref() {
     int blockHeight = 466793;
-    int transactionPosition = 2205;
+    int transactionIndex = 2205;
     int txoIndex = 3;
 
-    String txref = Txref.encode(blockHeight, transactionPosition, txoIndex);
+    String txref = Txref.encode(blockHeight, transactionIndex, txoIndex);
 
     System.out.println(txref);
     // prints "tx1:yjk0-uqay-zrqq-34y3-06"
 }
 ```
 
-#### Create an extended txref for a testnet transaction, with a blockHeight and transactionPosition and a specific txoIndex
+#### Create an extended txref for a testnet transaction, with a blockHeight and transactionIndex and a specific txoIndex
 
 ```java
 private static void createExtendedTestnetTxref() {
     int blockHeight = 466793;
-    int transactionPosition = 2205;
+    int transactionIndex = 2205;
     int txoIndex = 3;
 
-    String txref = Txref.encodeTestnet(blockHeight, transactionPosition, txoIndex);
+    String txref = Txref.encodeTestnet(blockHeight, transactionIndex, txoIndex);
 
     System.out.println(txref);
     // prints "txtest1:8jk0-uqay-zrqq-ldt6-va"
@@ -96,7 +96,7 @@ private static void decodeTxref() {
         DecodedResult decodedResult = Txref.decode("txtest1:8jk0-uqay-zrqq-ldt6-va");
 
         assert(decodedResult.getBlockHeight() == 466793);
-        assert(decodedResult.getTransactionPosition() == 2205);
+        assert(decodedResult.getTransactionIndex() == 2205);
         assert(decodedResult.getTxoIndex() == 3);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32M);
         }
@@ -114,7 +114,7 @@ be used instead.
         DecodedResult decodedResult = Txref.decode("txtest1:xjk0-uqay-zat0-dz8");
 
         assert(decodedResult.getBlockHeight() == 466793);
-        assert(decodedResult.getTransactionPosition() == 2205);
+        assert(decodedResult.getTransactionIndex() == 2205);
         assert(decodedResult.getTxoIndex() == 0);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32);
 

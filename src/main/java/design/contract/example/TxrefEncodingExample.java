@@ -32,7 +32,7 @@ public class TxrefEncodingExample {
 
     /**
      * Create an extended txref for a mainnet transaction, with a blockHeight and
-     * transactionIndex and a specific txoIndex of 3
+     * transactionIndex and a specific txoIndex
      */
     private static void createExtendedMainnetTxref() {
         int blockHeight = 170;
@@ -47,7 +47,7 @@ public class TxrefEncodingExample {
 
     /**
      * Create an extended txref for a testnet transaction, with a blockHeight and
-     * transactionIndex and a specific txoIndex of 3
+     * transactionIndex and a specific txoIndex
      */
     private static void createExtendedTestnetTxref() {
         int blockHeight = 170;

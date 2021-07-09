@@ -25,19 +25,19 @@ To use the package, you need the following Maven dependency:
 
 ### Encoding Examples
 
-See [the full code for the following examples](https://raw.githubusercontent.com/dcdpr/libtxref-java/master/src/main/java/design/contract/example/TxrefEncodingExample.java).
+See [the full code for the following examples](src/main/java/design/contract/example/TxrefEncodingExample.java).
 
 #### Create a txref for a mainnet transaction, with only a blockHeight and transactionIndex:
 
 ```java
 private static void createStandardMainnetTxref() {
-    int blockHeight = 466793;
-    int transactionIndex = 2205;
+    int blockHeight = 170;
+    int transactionIndex = 1;
 
     String txref = Txref.encode(blockHeight, transactionIndex);
 
     System.out.println(txref);
-    // prints "tx1:rjk0-uqay-z9l7-m9m"
+    // prints "tx1:r52q-qqpq-qpty-cfg"
 }
 ```
 
@@ -45,13 +45,13 @@ private static void createStandardMainnetTxref() {
 
 ```java
 private static void createStandardTestnetTxref() {
-    int blockHeight = 466793;
-    int transactionIndex = 2205;
+    int blockHeight = 170;
+    int transactionIndex = 1;
 
     String txref = Txref.encodeTestnet(blockHeight, transactionIndex);
 
     System.out.println(txref);
-    // prints "txtest1:xjk0-uqay-zghl-p89"
+    // prints "txtest1:x52q-qqpq-qvr9-ztk"
 }
 ```
 
@@ -59,45 +59,45 @@ private static void createStandardTestnetTxref() {
 
 ```java
 private static void createExtendedMainnetTxref() {
-    int blockHeight = 466793;
-    int transactionIndex = 2205;
-    int txoIndex = 3;
+    int blockHeight = 170;
+    int transactionIndex = 1;
+    int txoIndex = 1;
 
     String txref = Txref.encode(blockHeight, transactionIndex, txoIndex);
 
     System.out.println(txref);
-    // prints "tx1:yjk0-uqay-zrqq-34y3-06"
+    // prints "tx1:y52q-qqpq-qpqq-4lkz-zc"
 }
 ```
 
-#### Create an extended txref for a testnet transaction, with a blockHeight and transactionIndex and a specific txoIndex
+#### Create an extended txref for a testnet transaction, with a blockHeight and transactionIndex and a specific txoIndex:
 
 ```java
 private static void createExtendedTestnetTxref() {
-    int blockHeight = 466793;
-    int transactionIndex = 2205;
-    int txoIndex = 3;
+    int blockHeight = 170;
+    int transactionIndex = 1;
+    int txoIndex = 1;
 
     String txref = Txref.encodeTestnet(blockHeight, transactionIndex, txoIndex);
 
     System.out.println(txref);
-    // prints "txtest1:8jk0-uqay-zrqq-ldt6-va"
+    // prints "txtest1:852q-qqpq-qpqq-m8ef-pl"
 }
 ```
 
 ### Decoding Examples
 
-See [the full code for the following examples](https://raw.githubusercontent.com/dcdpr/libtxref-java/master/src/main/java/design/contract/example/TxrefDecodingExample.java).
+See [the full code for the following examples](src/main/java/design/contract/example/TxrefDecodingExample.java).
 
 #### Decode a txref
 
 ```java
 private static void decodeTxref() {
-        DecodedResult decodedResult = Txref.decode("txtest1:8jk0-uqay-zrqq-ldt6-va");
+        DecodedResult decodedResult = Txref.decode("tx1:r52q-qqpq-qpty-cfg");
 
-        assert(decodedResult.getBlockHeight() == 466793);
-        assert(decodedResult.getTransactionIndex() == 2205);
-        assert(decodedResult.getTxoIndex() == 3);
+        assert(decodedResult.getBlockHeight() == 170);
+        assert(decodedResult.getTransactionIndex() == 1);
+        assert(decodedResult.getTxoIndex() == 0);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32M);
         }
 ```
@@ -111,16 +111,16 @@ be used instead.
 
 ```java
     private static void decodeStandardTxrefUsingOriginalConstant() {
-        DecodedResult decodedResult = Txref.decode("txtest1:xjk0-uqay-zat0-dz8");
+        DecodedResult decodedResult = Txref.decode("tx1:r52q-qqpq-q5h5-5v2");
 
-        assert(decodedResult.getBlockHeight() == 466793);
-        assert(decodedResult.getTransactionIndex() == 2205);
+        assert(decodedResult.getBlockHeight() == 170);
+        assert(decodedResult.getTransactionIndex() == 1);
         assert(decodedResult.getTxoIndex() == 0);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32);
 
         System.out.println(decodedResult.getCommentary());
         // prints:
-        // "The txref txtest1:xjk0-uqay-zat0-dz8 uses an old encoding scheme and should be updated to txtest1:xjk0-uqay-zghl-p89 See https://github.com/dcdpr/libtxref-java#regarding-bech32-checksums for more information."
+        // "The txref tx1:r52q-qqpq-q5h5-5v2 uses an old encoding scheme and should be updated to tx1:r52q-qqpq-qpty-cfg See https://github.com/dcdpr/libtxref-java#regarding-bech32-checksums for more information."
         }
 ```
 

@@ -12,7 +12,7 @@ public class TxrefDecodingExample {
         DecodedResult decodedResult = Txref.decode("tx1:r52q-qqpq-qpty-cfg");
 
         assert(decodedResult.getBlockHeight() == 170);
-        assert(decodedResult.getTransactionPosition() == 1);
+        assert(decodedResult.getTransactionIndex() == 1);
         assert(decodedResult.getTxoIndex() == 0);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32M);
     }
@@ -24,7 +24,7 @@ public class TxrefDecodingExample {
         DecodedResult decodedResult = Txref.decode("tx1:y52q-qqpq-qpqq-4lkz-zc");
 
         assert(decodedResult.getBlockHeight() == 170);
-        assert(decodedResult.getTransactionPosition() == 1);
+        assert(decodedResult.getTransactionIndex() == 1);
         assert(decodedResult.getTxoIndex() == 1);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32M);
     }
@@ -38,7 +38,7 @@ public class TxrefDecodingExample {
         DecodedResult decodedResult = Txref.decode("tx1:r52q-qqpq-q5h5-5v2");
 
         assert(decodedResult.getBlockHeight() == 170);
-        assert(decodedResult.getTransactionPosition() == 1);
+        assert(decodedResult.getTransactionIndex() == 1);
         assert(decodedResult.getTxoIndex() == 0);
         assert(decodedResult.getEncoding() == DecodedResult.Encoding.BECH32);
 

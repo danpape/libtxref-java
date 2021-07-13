@@ -52,18 +52,18 @@ public class DecodedResultTest {
     }
 
     @Test
-    public void getTransactionPosition() {
+    public void getTransactionIndex() {
         int expected = 6;
         DecodedResult decodedResult = new DecodedResult(null, null, 0, expected, 0, 0);
-        assertEquals(expected, decodedResult.getTransactionPosition());
+        assertEquals(expected, decodedResult.getTransactionIndex());
     }
 
     @Test
-    public void setTransactionPosition() {
+    public void setTransactionIndex() {
         int expected = 6;
         DecodedResult decodedResult = new DecodedResult(null, null, 0, 0, 0, 0);
-        decodedResult.setTransactionPosition(expected);
-        assertEquals(expected, decodedResult.getTransactionPosition());
+        decodedResult.setTransactionIndex(expected);
+        assertEquals(expected, decodedResult.getTransactionIndex());
     }
 
     @Test

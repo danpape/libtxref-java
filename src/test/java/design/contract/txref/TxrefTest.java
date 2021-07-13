@@ -25,20 +25,20 @@ public class TxrefTest {
     }
 
     @Test
-    public void checkTransactionPositionRange_forValuesInRange_wontThrow() {
-        Txref.Impl.checkTransactionPositionRange(0);
-        Txref.Impl.checkTransactionPositionRange(1);
-        Txref.Impl.checkTransactionPositionRange(Txref.Limits.MAX_TRANSACTION_POSITION);
+    public void checkTransactionIndexRange_forValuesInRange_wontThrow() {
+        Txref.Impl.checkTransactionIndexRange(0);
+        Txref.Impl.checkTransactionIndexRange(1);
+        Txref.Impl.checkTransactionIndexRange(Txref.Limits.MAX_TRANSACTION_INDEX);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkTransactionPositionRange_forValueBeforeRange_throws() {
-        Txref.Impl.checkTransactionPositionRange(-1);
+    public void checkTransactionIndexRange_forValueBeforeRange_throws() {
+        Txref.Impl.checkTransactionIndexRange(-1);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkTransactionPositionRange_forValueAfterRange_throws() {
-        Txref.Impl.checkTransactionPositionRange(Txref.Limits.MAX_TRANSACTION_POSITION + 1);
+    public void checkTransactionIndexRange_forValueAfterRange_throws() {
+        Txref.Impl.checkTransactionIndexRange(Txref.Limits.MAX_TRANSACTION_INDEX + 1);
     }
 
     @Test
@@ -281,42 +281,42 @@ public class TxrefTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void extractTransactionPosition_withNullData_shouldThrow() {
-        Txref.Impl.extractTransactionPosition(null);
+    public void extractTransactionIndex_withNullData_shouldThrow() {
+        Txref.Impl.extractTransactionIndex(null);
     }
 
     @Test(expected = ArrayIndexOutOfBoundsException.class)
-    public void extractTransactionPosition_withEmptyData_shouldThrow() {
+    public void extractTransactionIndex_withEmptyData_shouldThrow() {
         char[] dp = new char[0];
-        Txref.Impl.extractTransactionPosition(dp);
+        Txref.Impl.extractTransactionIndex(dp);
     }
 
     @Test
-    public void extractTransactionPosition() {
+    public void extractTransactionIndex() {
 
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1rqqqqqqqqwtvvjr");
-        int transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(0, transactionPosition);
+        int transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(0, transactionIndex);
 
         decodedResult = Bech32.decode("tx1rqqqqqlllj687n2");
-        transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(0x7FFF, transactionPosition);
+        transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(0x7FFF, transactionIndex);
 
         decodedResult = Bech32.decode("tx1r7llllqqqatsvx9");
-        transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(0, transactionPosition);
+        transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(0, transactionIndex);
 
         decodedResult = Bech32.decode("tx1r7lllllllp6m78v");
-        transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(0x7FFF, transactionPosition);
+        transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(0x7FFF, transactionIndex);
 
         decodedResult = Bech32.decode("tx1rjk0uqayz9l7m9m");
-        transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(2205, transactionPosition);
+        transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(2205, transactionIndex);
 
         decodedResult = Bech32.decode("txtest1xjk0uqayzghlp89");
-        transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(2205, transactionPosition);
+        transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(2205, transactionIndex);
     }
 
     @Test(expected = NullPointerException.class)
@@ -422,31 +422,31 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("tx1:rqqq-qqqq-qwtv-vjr");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:rqqq-qqll-lj68-7n2");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:r7ll-llqq-qats-vx9");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:r7ll-llll-lp6m-78v");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:rjk0-uqay-z9l7-m9m");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
     }
 
@@ -457,31 +457,31 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("txtest1:xqqq-qqqq-qrrd-ksa");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:xqqq-qqll-lljx-y35");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:x7ll-llqq-qsr3-kym");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:x7ll-llll-lvj6-y9j");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:xjk0-uqay-zghl-p89");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
     }
 
@@ -492,25 +492,25 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("txrt1:qqqq-qqqq-qwpz-nyw");
         assertEquals(Txref.MAGIC_BTC_REGTEST, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txrt1:qqqq-qqll-ljsf-p98");
         assertEquals(Txref.MAGIC_BTC_REGTEST, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txrt1:q7ll-llqq-qap7-nsg");
         assertEquals(Txref.MAGIC_BTC_REGTEST, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txrt1:q7ll-llll-lps4-p3p");
         assertEquals(Txref.MAGIC_BTC_REGTEST, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
     }
 
@@ -550,23 +550,23 @@ public class TxrefTest {
     }
 
     @Test
-    public void extractExtendedTransactionPosition() {
+    public void extractExtendedTransactionIndex() {
 
         design.contract.bech32.DecodedResult decodedResult = Bech32.decode("tx1yqqqqqqqqqqqrvum0c");
-        int transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(0, transactionPosition);
+        int transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(0, transactionIndex);
 
         decodedResult = Bech32.decode("tx1yqqqqqlllqqqen8x05");
-        transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(0x7FFF, transactionPosition);
+        transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(0x7FFF, transactionIndex);
 
         decodedResult = Bech32.decode("tx1yjk0uqayzu4xx22sy6");
-        transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(2205, transactionPosition);
+        transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(2205, transactionIndex);
 
         decodedResult = Bech32.decode("txtest18jk0uqayzu4xgj9m8a");
-        transactionPosition = Txref.Impl.extractTransactionPosition(decodedResult.getDp());
-        assertEquals(2205, transactionPosition);
+        transactionIndex = Txref.Impl.extractTransactionIndex(decodedResult.getDp());
+        assertEquals(2205, transactionIndex);
     }
 
     @Test
@@ -691,70 +691,70 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqqq-qqqq-rvum-0c");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqll-lqqq-en8x-05");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llqq-qqqq-ggjg-w6");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llll-lqqq-jhf4-wk");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqqq-qpqq-pw4v-kq");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqll-lpqq-m3w3-kv");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llqq-qpqq-22ml-hz");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llll-lpqq-s4qz-hw");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqqq-qu4x-j4f2-xe");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqll-lu4x-g2jh-x4");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llqq-qu4x-e38e-8m");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llll-lu4x-rwuy-8h");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:yjk0-uqay-zu4x-x22s-y6");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
     }
 
@@ -765,70 +765,70 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqqq-qqqq-d5ns-vl");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqll-lqqq-htgd-vn");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llqq-qqqq-xsar-da");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llll-lqqq-u0x7-d3");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqqq-qpqq-0k68-48");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqll-lpqq-4fp6-4t");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llqq-qpqq-yj55-59");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llll-lpqq-7d0f-5f");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqqq-qu4x-udxp-97");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqll-lu4x-xjau-9j");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llqq-qu4x-hfgj-yu");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llll-lu4x-dkn0-ys");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:8jk0-uqay-zu4x-gj9m-8a");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(466793, decodedResult.getBlockHeight());
-        assertEquals(2205, decodedResult.getTransactionPosition());
+        assertEquals(2205, decodedResult.getTransactionIndex());
         assertEquals(0x1ABC, decodedResult.getTxoIndex());
 
     }
@@ -840,22 +840,22 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("txrt1:pqqq-qqqq-qpqq-3x6r-d0");
         assertEquals(Txref.MAGIC_BTC_REGTEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txrt1:pqqq-qqll-lpqq-tep7-dr");
         assertEquals(Txref.MAGIC_BTC_REGTEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txrt1:p7ll-llqq-qpqq-6z5s-vd");
         assertEquals(Txref.MAGIC_BTC_REGTEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
         decodedResult = Txref.Impl.txrefDecode("txrt1:p7ll-llll-lpqq-qa0d-vp");
         assertEquals(Txref.MAGIC_BTC_REGTEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
     }
 
@@ -956,21 +956,21 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("tx1:rqqq-qqqq-qwtv-vjr");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         // Transaction #1 of Block #170:
         decodedResult = Txref.Impl.txrefDecode("tx1:r52q‑qqpq‑qpty‑cfg");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(170, decodedResult.getBlockHeight());
-        assertEquals(1, decodedResult.getTransactionPosition());
+        assertEquals(1, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         // Transaction #1234 of Block #456789, with outpoint 1:
         decodedResult = Txref.Impl.txrefDecode("tx1:y29u‑mqjx‑ppqq‑sfp2‑tt");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(456789, decodedResult.getBlockHeight());
-        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1234, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
 
@@ -978,25 +978,25 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("tx1:rqqq-qqqq-qwtv-vjr");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:rqqq-qqll-lj68-7n2");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:r7ll-llqq-qats-vx9");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:r7ll-llll-lp6m-78v");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
 
@@ -1004,25 +1004,25 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("txtest1:xqqq-qqqq-qrrd-ksa");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:xqqq-qqll-lljx-y35");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:x7ll-llqq-qsr3-kym");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:x7ll-llll-lvj6-y9j");
         assertEquals(Txref.MAGIC_BTC_TEST, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
 
@@ -1030,31 +1030,31 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("tx1:r29u-mqjx-putt-3p0");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(456789, decodedResult.getBlockHeight());
-        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1234, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("TX1R29UMQJXPUTT3P0");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(456789, decodedResult.getBlockHeight());
-        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1234, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("TX1R29umqJX--PUTT----3P0");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(456789, decodedResult.getBlockHeight());
-        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1234, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1 r29u mqjx putt 3p0");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(456789, decodedResult.getBlockHeight());
-        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1234, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1!r29u/mqj*x-putt^^3p0");
         assertEquals(Txref.MAGIC_BTC_MAIN, decodedResult.getMagicCode());
         assertEquals(456789, decodedResult.getBlockHeight());
-        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1234, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
 
@@ -1062,57 +1062,57 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqqq-qqqq-rvum-0c");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqll-lqqq-en8x-05");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llqq-qqqq-ggjg-w6");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llll-lqqq-jhf4-wk");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
 
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqqq-qpqq-pw4v-kq");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:yqqq-qqll-lpqq-m3w3-kv");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llqq-qpqq-22ml-hz");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("tx1:y7ll-llll-lpqq-s4qz-hw");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
 
         decodedResult = Txref.Impl.txrefDecode("tx1:y29u-mqjx-ppqq-sfp2-tt");
         assertEquals(Txref.MAGIC_BTC_MAIN_EXTENDED, decodedResult.getMagicCode());
         assertEquals(456789, decodedResult.getBlockHeight());
-        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1234, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
 
@@ -1120,57 +1120,57 @@ public class TxrefTest {
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqqq-qqqq-d5ns-vl");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqll-lqqq-htgd-vn");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llqq-qqqq-xsar-da");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llll-lqqq-u0x7-d3");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(0, decodedResult.getTxoIndex());
 
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqqq-qpqq-0k68-48");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:8qqq-qqll-lpqq-4fp6-4t");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llqq-qpqq-yj55-59");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0, decodedResult.getTransactionPosition());
+        assertEquals(0, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:87ll-llll-lpqq-7d0f-5f");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(0xFFFFFF, decodedResult.getBlockHeight());
-        assertEquals(0x7FFF, decodedResult.getTransactionPosition());
+        assertEquals(0x7FFF, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
 
 
         decodedResult = Txref.Impl.txrefDecode("txtest1:829u-mqjx-ppqq-73wp-gv");
         assertEquals(Txref.MAGIC_BTC_TEST_EXTENDED, decodedResult.getMagicCode());
         assertEquals(456789, decodedResult.getBlockHeight());
-        assertEquals(1234, decodedResult.getTransactionPosition());
+        assertEquals(1234, decodedResult.getTransactionIndex());
         assertEquals(1, decodedResult.getTxoIndex());
     }
 
